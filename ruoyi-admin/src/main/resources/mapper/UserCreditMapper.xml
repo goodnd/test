@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.UserCreditMapper">
+    
+    <resultMap type="UserCredit" id="UserCreditResult">
+        <result property="id"    column="id"    />
+        <result property="userAccount"    column="userAccount"    />
+        <result property="cellAddress"    column="cellAddress"    />
+        <result property="points"    column="points"    />
+        <result property="prize"    column="prize"    />
+        <result property="prizeStatus"    column="prizeStatus"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectUserCreditVo">
+        select id, userAccount, cellAddress, points, prize, prizeStatus, create_by from sm_user_credit
+    </sql>
+
+    <select id="selectUserCreditList" parameterType="UserCredit" resultMap="UserCreditResult">
+        <include refid="selectUserCreditVo"/>
+        <where>  
+            <if test="userAccount != null  and userAccount != ''"> and userAccount = #{userAccount}</if>
+            <if test="cellAddress != null  and cellAddress != ''"> and cellAddress = #{cellAddress}</if>
+            <if test="prizeStatus != null  and prizeStatus != ''"> and prizeStatus = #{prizeStatus}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserCreditById" parameterType="Long" resultMap="UserCreditResult">
+        <include refid="selectUserCreditVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserCredit" parameterType="UserCredit" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_user_credit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userAccount != null and userAccount != ''">userAccount,</if>
+            <if test="cellAddress != null">cellAddress,</if>
+            <if test="points != null">points,</if>
+            <if test="prize != null">prize,</if>
+            <if test="prizeStatus != null">prizeStatus,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userAccount != null and userAccount != ''">#{userAccount},</if>
+            <if test="cellAddress != null">#{cellAddress},</if>
+            <if test="points != null">#{points},</if>
+            <if test="prize != null">#{prize},</if>
+            <if test="prizeStatus != null">#{prizeStatus},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserCredit" parameterType="UserCredit">
+        update sm_user_credit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userAccount != null and userAccount != ''">userAccount = #{userAccount},</if>
+            <if test="cellAddress != null">cellAddress = #{cellAddress},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="prize != null">prize = #{prize},</if>
+            <if test="prizeStatus != null">prizeStatus = #{prizeStatus},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserCreditById" parameterType="Long">
+        delete from sm_user_credit where id = #{id}
+    </delete>
+
+    <delete id="deleteUserCreditByIds" parameterType="String">
+        delete from sm_user_credit where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

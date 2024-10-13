@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.FeedbackMapper">
+    
+    <resultMap type="Feedback" id="FeedbackResult">
+        <result property="Id"    column="Id"    />
+        <result property="feedbackId"    column="feedbackId"    />
+        <result property="userId"    column="userId"    />
+        <result property="address"    column="address"    />
+        <result property="processor"    column="processor"    />
+        <result property="fbStatus"    column="fbStatus"    />
+        <result property="fbResult"    column="fbResult"    />
+    </resultMap>
+
+    <sql id="selectFeedbackVo">
+        select Id, feedbackId, userId, address, processor, fbStatus, fbResult from sm_feedback
+    </sql>
+
+    <select id="selectFeedbackList" parameterType="Feedback" resultMap="FeedbackResult">
+        <include refid="selectFeedbackVo"/>
+        <where>  
+            <if test="feedbackId != null "> and feedbackId = #{feedbackId}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="processor != null  and processor != ''"> and processor = #{processor}</if>
+            <if test="fbStatus != null  and fbStatus != ''"> and fbStatus = #{fbStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectFeedbackById" parameterType="Long" resultMap="FeedbackResult">
+        <include refid="selectFeedbackVo"/>
+        where Id = #{Id}
+    </select>
+
+    <insert id="insertFeedback" parameterType="Feedback">
+        insert into sm_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="Id != null">Id,</if>
+            <if test="feedbackId != null">feedbackId,</if>
+            <if test="userId != null">userId,</if>
+            <if test="address != null">address,</if>
+            <if test="processor != null">processor,</if>
+            <if test="fbStatus != null and fbStatus != ''">fbStatus,</if>
+            <if test="fbResult != null">fbResult,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="Id != null">#{Id},</if>
+            <if test="feedbackId != null">#{feedbackId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="address != null">#{address},</if>
+            <if test="processor != null">#{processor},</if>
+            <if test="fbStatus != null and fbStatus != ''">#{fbStatus},</if>
+            <if test="fbResult != null">#{fbResult},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFeedback" parameterType="Feedback">
+        update sm_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="feedbackId != null">feedbackId = #{feedbackId},</if>
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="processor != null">processor = #{processor},</if>
+            <if test="fbStatus != null and fbStatus != ''">fbStatus = #{fbStatus},</if>
+            <if test="fbResult != null">fbResult = #{fbResult},</if>
+        </trim>
+        where Id = #{Id}
+    </update>
+
+    <delete id="deleteFeedbackById" parameterType="Long">
+        delete from sm_feedback where Id = #{Id}
+    </delete>
+
+    <delete id="deleteFeedbackByIds" parameterType="String">
+        delete from sm_feedback where Id in 
+        <foreach item="Id" collection="array" open="(" separator="," close=")">
+            #{Id}
+        </foreach>
+    </delete>
+</mapper>

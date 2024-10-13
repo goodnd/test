@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.GarbageSortingMapper">
+    
+    <resultMap type="GarbageSorting" id="GarbageSortingResult">
+        <result property="id"    column="id"    />
+        <result property="garbageName"    column="garbage_name"    />
+        <result property="garbageCategory"    column="garbage_category"    />
+        <result property="garbageImg"    column="garbage_img"    />
+        <result property="creatBy"    column="creat_by"    />
+        <result property="remake"    column="remake"    />
+    </resultMap>
+
+    <sql id="selectGarbageSortingVo">
+        select id, garbage_name, garbage_category, garbage_img, creat_by, remake from sm_garbage_sorting
+    </sql>
+
+    <select id="selectGarbageSortingList" parameterType="GarbageSorting" resultMap="GarbageSortingResult">
+        <include refid="selectGarbageSortingVo"/>
+        <where>  
+            <if test="garbageName != null  and garbageName != ''"> and garbage_name like concat('%', #{garbageName}, '%')</if>
+            <if test="garbageCategory != null  and garbageCategory != ''"> and garbage_category = #{garbageCategory}</if>
+            <if test="creatBy != null  and creatBy != ''"> and creat_by = #{creatBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectGarbageSortingById" parameterType="Long" resultMap="GarbageSortingResult">
+        <include refid="selectGarbageSortingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGarbageSorting" parameterType="GarbageSorting" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_garbage_sorting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="garbageName != null">garbage_name,</if>
+            <if test="garbageCategory != null">garbage_category,</if>
+            <if test="garbageImg != null">garbage_img,</if>
+            <if test="creatBy != null">creat_by,</if>
+            <if test="remake != null">remake,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="garbageName != null">#{garbageName},</if>
+            <if test="garbageCategory != null">#{garbageCategory},</if>
+            <if test="garbageImg != null">#{garbageImg},</if>
+            <if test="creatBy != null">#{creatBy},</if>
+            <if test="remake != null">#{remake},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGarbageSorting" parameterType="GarbageSorting">
+        update sm_garbage_sorting
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="garbageName != null">garbage_name = #{garbageName},</if>
+            <if test="garbageCategory != null">garbage_category = #{garbageCategory},</if>
+            <if test="garbageImg != null">garbage_img = #{garbageImg},</if>
+            <if test="creatBy != null">creat_by = #{creatBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGarbageSortingById" parameterType="Long">
+        delete from sm_garbage_sorting where id = #{id}
+    </delete>
+
+    <delete id="deleteGarbageSortingByIds" parameterType="String">
+        delete from sm_garbage_sorting where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

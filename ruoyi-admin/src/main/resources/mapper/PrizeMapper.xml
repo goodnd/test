@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.PrizeMapper">
+    
+    <resultMap type="Prize" id="PrizeResult">
+        <result property="id"    column="id"    />
+        <result property="prizeId"    column="prizeId"    />
+        <result property="prizeName"    column="prizeName"    />
+        <result property="prizeImg"    column="prizeImg"    />
+        <result property="prizeNumber"    column="prizeNumber"    />
+        <result property="prizeCredit"    column="prizeCredit"    />
+        <result property="spendNumber"    column="spendNumber"    />
+    </resultMap>
+
+    <sql id="selectPrizeVo">
+        select id, prizeId, prizeName, prizeImg, prizeNumber, prizeCredit, spendNumber from sm_prize
+    </sql>
+
+    <select id="selectPrizeList" parameterType="Prize" resultMap="PrizeResult">
+        <include refid="selectPrizeVo"/>
+        <where>  
+            <if test="prizeId != null "> and prizeId = #{prizeId}</if>
+            <if test="prizeName != null  and prizeName != ''"> and prizeName like concat('%', #{prizeName}, '%')</if>
+            <if test="prizeNumber != null "> and prizeNumber = #{prizeNumber}</if>
+            <if test="prizeCredit != null  and prizeCredit != ''"> and prizeCredit = #{prizeCredit}</if>
+        </where>
+    </select>
+    
+    <select id="selectPrizeById" parameterType="Long" resultMap="PrizeResult">
+        <include refid="selectPrizeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPrize" parameterType="Prize">
+        insert into sm_prize
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="prizeId != null">prizeId,</if>
+            <if test="prizeName != null">prizeName,</if>
+            <if test="prizeImg != null">prizeImg,</if>
+            <if test="prizeNumber != null">prizeNumber,</if>
+            <if test="prizeCredit != null">prizeCredit,</if>
+            <if test="spendNumber != null">spendNumber,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="prizeId != null">#{prizeId},</if>
+            <if test="prizeName != null">#{prizeName},</if>
+            <if test="prizeImg != null">#{prizeImg},</if>
+            <if test="prizeNumber != null">#{prizeNumber},</if>
+            <if test="prizeCredit != null">#{prizeCredit},</if>
+            <if test="spendNumber != null">#{spendNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePrize" parameterType="Prize">
+        update sm_prize
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="prizeId != null">prizeId = #{prizeId},</if>
+            <if test="prizeName != null">prizeName = #{prizeName},</if>
+            <if test="prizeImg != null">prizeImg = #{prizeImg},</if>
+            <if test="prizeNumber != null">prizeNumber = #{prizeNumber},</if>
+            <if test="prizeCredit != null">prizeCredit = #{prizeCredit},</if>
+            <if test="spendNumber != null">spendNumber = #{spendNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePrizeById" parameterType="Long">
+        delete from sm_prize where id = #{id}
+    </delete>
+
+    <delete id="deletePrizeByIds" parameterType="String">
+        delete from sm_prize where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
