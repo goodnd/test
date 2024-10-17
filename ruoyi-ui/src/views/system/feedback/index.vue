@@ -9,6 +9,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
       <el-form-item label="投诉地址" prop="address">
         <el-input
           v-model="queryParams.address"
@@ -17,24 +18,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="处理人" prop="processor">
-        <el-input
-          v-model="queryParams.processor"
-          placeholder="请输入处理人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
+
       <el-form-item label="处理状态" prop="fbStatus">
         <el-select v-model="queryParams.fbStatus" placeholder="请选择处理状态" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_job_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
+          <el-option label="未处理" value="未处理"></el-option>
+          <el-option label="正在处理中" value="正在处理中"></el-option>
+          <el-option label="已处理" value="已处理"></el-option>
         </el-select>
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -89,14 +82,16 @@
 
     <el-table v-loading="loading" :data="feedbackList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="反馈编号" align="center" prop="feedbackId" />
       <el-table-column label="用户id" align="center" prop="userId" />
       <el-table-column label="投诉地址" align="center" prop="address" />
+      <el-table-column label="反馈问题" align="center" prop="problem" />
       <el-table-column label="处理人" align="center" prop="processor" />
       <el-table-column label="处理状态" align="center" prop="fbStatus">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_job_status" :value="scope.row.fbStatus"/>
-        </template>
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.sys_job_status" :value="scope.row.fbStatus"/>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="反馈结果" align="center" prop="fbResult" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -139,17 +134,24 @@
         <el-form-item label="投诉地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入投诉地址" />
         </el-form-item>
+        <el-form-item label="反馈问题" prop="problem">
+          <el-input v-model="form.problem" placeholder="请输入反馈问题" />
+        </el-form-item>
         <el-form-item label="处理人" prop="processor">
           <el-input v-model="form.processor" placeholder="请输入处理人" />
         </el-form-item>
         <el-form-item label="处理状态" prop="fbStatus">
+<!--          <el-radio-group v-model="form.fbStatus">-->
+<!--            <el-radio-->
+<!--              v-for="dict in dict.type.sys_job_status"-->
+<!--              :key="dict.value"-->
+<!--              :label="dict.value"-->
+<!--            >{{dict.label}}</el-radio>-->
+<!--          </el-radio-group>-->
           <el-select v-model="form.fbStatus" placeholder="请选择处理状态">
-            <el-option
-              v-for="dict in dict.type.sys_job_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
+            <el-option label="未处理" value="未处理"></el-option>
+            <el-option label="正在处理中" value="正在处理中"></el-option>
+            <el-option label="已处理" value="已处理"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="反馈结果" prop="fbResult">
@@ -195,9 +197,12 @@ export default {
         pageNum: 1,
         pageSize: 10,
         feedbackId: null,
+        userId: null,
         address: null,
+        problem: null,
         processor: null,
         fbStatus: null,
+        fbResult: null
       },
       // 表单参数
       form: {},
@@ -205,9 +210,6 @@ export default {
       rules: {
         feedbackId: [
           { required: true, message: "反馈编号不能为空", trigger: "blur" }
-        ],
-        fbStatus: [
-          { required: true, message: "处理状态不能为空", trigger: "change" }
         ],
       }
     };
@@ -233,10 +235,11 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        Id: null,
+        id: null,
         feedbackId: null,
         userId: null,
         address: null,
+        problem: null,
         processor: null,
         fbStatus: null,
         fbResult: null
@@ -255,7 +258,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.Id)
+      this.ids = selection.map(item => item.id)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -268,8 +271,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const Id = row.Id || this.ids
-      getFeedback(Id).then(response => {
+      const id = row.id || this.ids
+      getFeedback(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改反馈与处理";
@@ -279,7 +282,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.Id != null) {
+          if (this.form.id != null) {
             updateFeedback(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -297,9 +300,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const Ids = row.Id || this.ids;
-      this.$modal.confirm('是否确认删除反馈与处理编号为"' + Ids + '"的数据项？').then(function() {
-        return delFeedback(Ids);
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除反馈与处理编号为"' + ids + '"的数据项？').then(function() {
+        return delFeedback(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

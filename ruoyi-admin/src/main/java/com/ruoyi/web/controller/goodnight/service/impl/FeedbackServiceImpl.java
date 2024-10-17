@@ -1,21 +1,19 @@
 package com.ruoyi.web.controller.goodnight.service.impl;
 
-import java.util.List;
-
 import com.ruoyi.web.controller.goodnight.domain.Feedback;
 import com.ruoyi.web.controller.goodnight.mapper.FeedbackMapper;
 import com.ruoyi.web.controller.goodnight.service.IFeedbackService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
  * 反馈与处理Service业务层处理
  * 
  * @author goodnight
- * @date 2024-10-06
+ * @date 2024-10-14
  */
 @Service
 public class FeedbackServiceImpl implements IFeedbackService
@@ -26,13 +24,13 @@ public class FeedbackServiceImpl implements IFeedbackService
     /**
      * 查询反馈与处理
      * 
-     * @param Id 反馈与处理主键
+     * @param id 反馈与处理主键
      * @return 反馈与处理
      */
     @Override
-    public Feedback selectFeedbackById(Long Id)
+    public Feedback selectFeedbackById(Long id)
     {
-        return feedbackMapper.selectFeedbackById(Id);
+        return feedbackMapper.selectFeedbackById(id);
     }
 
     /**
@@ -74,24 +72,24 @@ public class FeedbackServiceImpl implements IFeedbackService
     /**
      * 批量删除反馈与处理
      * 
-     * @param Ids 需要删除的反馈与处理主键
+     * @param ids 需要删除的反馈与处理主键
      * @return 结果
      */
     @Override
-    public int deleteFeedbackByIds(Long[] Ids)
+    public int deleteFeedbackByIds(Long[] ids)
     {
-        return feedbackMapper.deleteFeedbackByIds(Ids);
+        return feedbackMapper.deleteFeedbackByIds(ids);
     }
 
     /**
      * 删除反馈与处理信息
      * 
-     * @param Id 反馈与处理主键
+     * @param id 反馈与处理主键
      * @return 结果
      */
     @Override
-    public int deleteFeedbackById(Long Id)
+    public int deleteFeedbackById(Long id)
     {
-        return feedbackMapper.deleteFeedbackById(Id);
+        return feedbackMapper.deleteFeedbackById(id);
     }
 }

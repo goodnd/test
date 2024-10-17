@@ -275,11 +275,30 @@ public class SysUserServiceImpl implements ISysUserService
      * @param user 用户信息
      * @return 结果
      */
+
     @Override
     public boolean registerUser(SysUser user)
     {
-        return userMapper.insertUser(user) > 0;
+        System.out.println(user);
+        System.out.println(user.getUserType());
+        if (user.getUserType().equals("11")){
+            System.out.println("管理员");
+            Boolean total = userMapper.insertUser(user) > 0;
+            //插入角色
+            insertUserRole(userMapper.selectUserByUserName(user.getUserName()).getUserId(),new Long[]{2L});
+            return total;
+//        return userMapper.insertUser(user) > 0;
+        }else {
+            System.out.println("用户");
+            Boolean total = userMapper.insertUser(user) > 0;
+            //插入角色，100是我的用户角色id
+            insertUserRole(userMapper.selectUserByUserName(user.getUserName()).getUserId(),new Long[]{100L});
+            return total;
+        }
+
     }
+
+
 
     /**
      * 修改保存用户信息

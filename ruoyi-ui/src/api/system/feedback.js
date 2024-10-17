@@ -10,9 +10,9 @@ export function listFeedback(query) {
 }
 
 // 查询反馈与处理详细
-export function getFeedback(Id) {
+export function getFeedback(id) {
   return request({
-    url: '/system/feedback/' + Id,
+    url: '/system/feedback/' + id,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateFeedback(data) {
 }
 
 // 删除反馈与处理
-export function delFeedback(Id) {
+export function delFeedback(id) {
   return request({
-    url: '/system/feedback/' + Id,
+    url: '/system/feedback/' + id,
     method: 'delete'
   })
 }

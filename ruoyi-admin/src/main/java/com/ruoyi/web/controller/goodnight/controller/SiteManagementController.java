@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.goodnight.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.web.controller.goodnight.domain.Prize;
 import com.ruoyi.web.controller.goodnight.domain.SiteManagement;
 import com.ruoyi.web.controller.goodnight.service.ISiteManagementService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,7 @@ public class SiteManagementController extends BaseController
 {
     @Autowired
     private ISiteManagementService siteManagementService;
+
 
     /**
      * 查询垃圾站点管理列表

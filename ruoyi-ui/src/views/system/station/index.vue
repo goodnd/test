@@ -134,7 +134,7 @@
           <el-input v-model="form.head" placeholder="请输入负责人姓名" />
         </el-form-item>
         <el-form-item label="电话" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入负责人电话" />
+          <el-input v-model="form.phone" placeholder="请输入负责人电话" maxlength="11" />
         </el-form-item>
         <el-form-item label="创建人" prop="createBy">
           <el-input v-model="form.createBy" placeholder="请输入创建人名称" />
@@ -186,6 +186,13 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        phone: [
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur"
+          }
+        ],
         stationName: [
           { required: true, message: "回收站名称不能为空", trigger: "blur" }
         ],

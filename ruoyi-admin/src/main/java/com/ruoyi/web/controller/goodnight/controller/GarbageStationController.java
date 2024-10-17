@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.web.controller.goodnight.domain.GarbageStation;
+import com.ruoyi.web.controller.goodnight.domain.Prize;
 import com.ruoyi.web.controller.goodnight.service.IGarbageStationService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,12 @@ public class GarbageStationController extends BaseController
 {
     @Autowired
     private IGarbageStationService garbageStationService;
+    // 获取所有垃圾回收站点信息
+    @PostMapping(value = "listAll")
+    public  AjaxResult listAll(){
+        List<GarbageStation> dataList = garbageStationService.selectGarbageStationList(null);
+        return AjaxResult.success(dataList);
+    }
 
     /**
      * 查询垃圾回收站管理列表

@@ -9,18 +9,18 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 反馈与处理对象 sm_feedback
  * 
  * @author goodnight
- * @date 2024-10-06
+ * @date 2024-10-14
  */
 public class Feedback extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
-    private Long Id;
+    private Long id;
 
     /** 反馈编号 */
     @Excel(name = "反馈编号")
-    private Long feedbackId;
+    private String feedbackId;
 
     /** 用户id */
     @Excel(name = "用户id")
@@ -29,6 +29,10 @@ public class Feedback extends BaseEntity
     /** 投诉地址 */
     @Excel(name = "投诉地址")
     private String address;
+
+    /** 反馈问题 */
+    @Excel(name = "反馈问题")
+    private String problem;
 
     /** 处理人 */
     @Excel(name = "处理人")
@@ -42,21 +46,21 @@ public class Feedback extends BaseEntity
     @Excel(name = "反馈结果")
     private String fbResult;
 
-    public void setId(Long Id) 
+    public void setId(Long id)
     {
-        this.Id = Id;
+        this.id = id;
     }
 
     public Long getId() 
     {
-        return Id;
+        return id;
     }
-    public void setFeedbackId(Long feedbackId) 
+    public void setFeedbackId(String feedbackId) 
     {
         this.feedbackId = feedbackId;
     }
 
-    public Long getFeedbackId() 
+    public String getFeedbackId() 
     {
         return feedbackId;
     }
@@ -77,6 +81,15 @@ public class Feedback extends BaseEntity
     public String getAddress() 
     {
         return address;
+    }
+    public void setProblem(String problem) 
+    {
+        this.problem = problem;
+    }
+
+    public String getProblem() 
+    {
+        return problem;
     }
     public void setProcessor(String processor) 
     {
@@ -109,10 +122,11 @@ public class Feedback extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("Id", getId())
+            .append("id", getId())
             .append("feedbackId", getFeedbackId())
             .append("userId", getUserId())
             .append("address", getAddress())
+            .append("problem", getProblem())
             .append("processor", getProcessor())
             .append("fbStatus", getFbStatus())
             .append("fbResult", getFbResult())

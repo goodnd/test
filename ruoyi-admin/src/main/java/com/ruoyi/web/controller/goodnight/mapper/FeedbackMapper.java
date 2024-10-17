@@ -9,17 +9,17 @@ import java.util.List;
  * 反馈与处理Mapper接口
  * 
  * @author goodnight
- * @date 2024-10-06
+ * @date 2024-10-14
  */
 public interface FeedbackMapper 
 {
     /**
      * 查询反馈与处理
      * 
-     * @param Id 反馈与处理主键
+     * @param id 反馈与处理主键
      * @return 反馈与处理
      */
-    public Feedback selectFeedbackById(Long Id);
+    public Feedback selectFeedbackById(Long id);
 
     /**
      * 查询反馈与处理列表
@@ -48,16 +48,16 @@ public interface FeedbackMapper
     /**
      * 删除反馈与处理
      * 
-     * @param Id 反馈与处理主键
+     * @param id 反馈与处理主键
      * @return 结果
      */
-    public int deleteFeedbackById(Long Id);
+    public int deleteFeedbackById(Long id);
 
     /**
      * 批量删除反馈与处理
      * 
-     * @param Ids 需要删除的数据主键集合
+     * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteFeedbackByIds(Long[] Ids);
+    public int deleteFeedbackByIds(Long[] ids);
 }

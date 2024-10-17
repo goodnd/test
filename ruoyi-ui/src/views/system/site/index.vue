@@ -8,6 +8,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
+
       </el-form-item>
       <el-form-item label="地址" prop="address">
         <el-input
@@ -26,12 +27,24 @@
         />
       </el-form-item>
       <el-form-item label="回收站" prop="sitRecyclingStation">
-        <el-input
-          v-model="queryParams.sitRecyclingStation"
-          placeholder="请输入所属回收站"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+<!--        <el-input-->
+<!--          v-model="queryParams.sitRecyclingStation"-->
+<!--          placeholder="请输入所属回收站"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+        <template>
+          <el-select v-model="queryParams.sitRecyclingStation"
+                     clearable
+                     @keyup.enter.native="handleQuery" placeholder="请选择所属回收站">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.stationName"
+              :value="item.stationName">
+            </el-option>
+          </el-select>
+        </template>
       </el-form-item>
       <el-form-item label="创建人" prop="createBy">
         <el-input
@@ -143,7 +156,14 @@
           <el-input v-model="form.plot" placeholder="请输入所属小区" />
         </el-form-item>
         <el-form-item label="回收站" prop="sitRecyclingStation">
-          <el-input v-model="form.sitRecyclingStation" placeholder="请输入所属回收站" />
+          <el-select v-model="form.sitRecyclingStation" placeholder="请选择回收站名称">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.stationName"
+              :value="item.stationName">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="创建人" prop="createBy">
           <el-input v-model="form.createBy" placeholder="请输入创建人名称" />
@@ -159,11 +179,15 @@
 
 <script>
 import { listSite, getSite, delSite, addSite, updateSite } from "@/api/system/site";
+import { AllListStation } from "@/api/system/station";
 
 export default {
   name: "Site",
   data() {
     return {
+      options: [
+
+      ],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -210,8 +234,15 @@ export default {
   },
   created() {
     this.getList();
+    this.getAllListStation();
   },
   methods: {
+    /** 查询站点下拉列表*/
+    getAllListStation() {
+      AllListStation().then(response => {
+        this.options = response.data;
+      });
+    },
     /** 查询垃圾站点管理列表 */
     getList() {
       this.loading = true;

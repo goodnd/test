@@ -41,6 +41,7 @@ public class BaseEntity implements Serializable
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;
+    public String userType;
 
     public String getSearchValue()
     {
@@ -115,4 +116,7 @@ public class BaseEntity implements Serializable
     {
         this.params = params;
     }
+
+
+
 }

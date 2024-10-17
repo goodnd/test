@@ -5,52 +5,56 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.web.controller.goodnight.mapper.FeedbackMapper">
     
     <resultMap type="Feedback" id="FeedbackResult">
-        <result property="Id"    column="Id"    />
+        <result property="id"    column="id"    />
         <result property="feedbackId"    column="feedbackId"    />
         <result property="userId"    column="userId"    />
         <result property="address"    column="address"    />
+        <result property="problem"    column="problem"    />
         <result property="processor"    column="processor"    />
         <result property="fbStatus"    column="fbStatus"    />
         <result property="fbResult"    column="fbResult"    />
     </resultMap>
 
     <sql id="selectFeedbackVo">
-        select Id, feedbackId, userId, address, processor, fbStatus, fbResult from sm_feedback
+        select id, feedbackId, userId, address, problem, processor, fbStatus, fbResult from sm_feedback
     </sql>
 
     <select id="selectFeedbackList" parameterType="Feedback" resultMap="FeedbackResult">
         <include refid="selectFeedbackVo"/>
         <where>  
-            <if test="feedbackId != null "> and feedbackId = #{feedbackId}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="feedbackId != null  and feedbackId != ''"> and feedbackId like concat('%', #{feedbackId}, '%')</if>
+            <if test="userId != null "> and userId = #{userId}</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="problem != null  and problem != ''"> and problem = #{problem}</if>
             <if test="processor != null  and processor != ''"> and processor = #{processor}</if>
             <if test="fbStatus != null  and fbStatus != ''"> and fbStatus = #{fbStatus}</if>
+            <if test="fbResult != null  and fbResult != ''"> and fbResult = #{fbResult}</if>
         </where>
     </select>
     
     <select id="selectFeedbackById" parameterType="Long" resultMap="FeedbackResult">
         <include refid="selectFeedbackVo"/>
-        where Id = #{Id}
+        where id = #{id}
     </select>
 
-    <insert id="insertFeedback" parameterType="Feedback">
+    <insert id="insertFeedback" parameterType="Feedback" useGeneratedKeys="true" keyProperty="id">
         insert into sm_feedback
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="Id != null">Id,</if>
-            <if test="feedbackId != null">feedbackId,</if>
+            <if test="feedbackId != null and feedbackId != ''">feedbackId,</if>
             <if test="userId != null">userId,</if>
             <if test="address != null">address,</if>
+            <if test="problem != null">problem,</if>
             <if test="processor != null">processor,</if>
-            <if test="fbStatus != null and fbStatus != ''">fbStatus,</if>
+            <if test="fbStatus != null">fbStatus,</if>
             <if test="fbResult != null">fbResult,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="Id != null">#{Id},</if>
-            <if test="feedbackId != null">#{feedbackId},</if>
+            <if test="feedbackId != null and feedbackId != ''">#{feedbackId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="address != null">#{address},</if>
+            <if test="problem != null">#{problem},</if>
             <if test="processor != null">#{processor},</if>
-            <if test="fbStatus != null and fbStatus != ''">#{fbStatus},</if>
+            <if test="fbStatus != null">#{fbStatus},</if>
             <if test="fbResult != null">#{fbResult},</if>
          </trim>
     </insert>
@@ -58,24 +62,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateFeedback" parameterType="Feedback">
         update sm_feedback
         <trim prefix="SET" suffixOverrides=",">
-            <if test="feedbackId != null">feedbackId = #{feedbackId},</if>
+            <if test="feedbackId != null and feedbackId != ''">feedbackId = #{feedbackId},</if>
             <if test="userId != null">userId = #{userId},</if>
             <if test="address != null">address = #{address},</if>
+            <if test="problem != null">problem = #{problem},</if>
             <if test="processor != null">processor = #{processor},</if>
-            <if test="fbStatus != null and fbStatus != ''">fbStatus = #{fbStatus},</if>
+            <if test="fbStatus != null">fbStatus = #{fbStatus},</if>
             <if test="fbResult != null">fbResult = #{fbResult},</if>
         </trim>
-        where Id = #{Id}
+        where id = #{id}
     </update>
 
     <delete id="deleteFeedbackById" parameterType="Long">
-        delete from sm_feedback where Id = #{Id}
+        delete from sm_feedback where id = #{id}
     </delete>
 
     <delete id="deleteFeedbackByIds" parameterType="String">
-        delete from sm_feedback where Id in 
-        <foreach item="Id" collection="array" open="(" separator="," close=")">
-            #{Id}
+        delete from sm_feedback where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </delete>
 </mapper>

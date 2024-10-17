@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectGarbageSortingVo"/>
         <where>  
             <if test="garbageName != null  and garbageName != ''"> and garbage_name like concat('%', #{garbageName}, '%')</if>
-            <if test="garbageCategory != null  and garbageCategory != ''"> and garbage_category = #{garbageCategory}</if>
+            <if test="garbageCategory != null  and garbageCategory != ''"> and garbage_category like concat('%', #{garbageCategory}, '%')</if>
             <if test="creatBy != null  and creatBy != ''"> and creat_by = #{creatBy}</if>
         </where>
     </select>

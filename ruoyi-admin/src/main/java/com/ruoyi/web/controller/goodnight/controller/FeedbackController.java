@@ -27,7 +27,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 反馈与处理Controller
  * 
  * @author goodnight
- * @date 2024-10-06
+ * @date 2024-10-14
  */
 @RestController
 @RequestMapping("/system/feedback")
@@ -65,10 +65,10 @@ public class FeedbackController extends BaseController
      * 获取反馈与处理详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:feedback:query')")
-    @GetMapping(value = "/{Id}")
-    public AjaxResult getInfo(@PathVariable("Id") Long Id)
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(feedbackService.selectFeedbackById(Id));
+        return success(feedbackService.selectFeedbackById(id));
     }
 
     /**
@@ -98,9 +98,9 @@ public class FeedbackController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:feedback:remove')")
     @Log(title = "反馈与处理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{Ids}")
-    public AjaxResult remove(@PathVariable Long[] Ids)
+	@DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(feedbackService.deleteFeedbackByIds(Ids));
+        return toAjax(feedbackService.deleteFeedbackByIds(ids));
     }
 }
