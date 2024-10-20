@@ -1,43 +1,35 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="编号" prop="stationId">
+      <el-form-item label="车辆编号" prop="vehicleId">
         <el-input
-          v-model="queryParams.stationId"
-          placeholder="请输入回收站编号"
+          v-model="queryParams.vehicleId"
+          placeholder="请输入车辆编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="站点名称" prop="stationName">
+      <el-form-item label="车牌号" prop="vehiclePlateNumber">
         <el-input
-          v-model="queryParams.stationName"
-          placeholder="请输入回收站名称"
+          v-model="queryParams.vehiclePlateNumber"
+          placeholder="请输入车牌号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="地址" prop="address">
-        <el-input
-          v-model="queryParams.address"
-          placeholder="请输入地址"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="负责人" prop="head">
-        <el-input
-          v-model="queryParams.head"
-          placeholder="请输入负责人姓名"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="站点状态" prop="stationStatus">
-        <el-select v-model="queryParams.stationStatus" placeholder="请选择站点状态" clearable>
-          <el-option label="正常" value="0"></el-option>
-          <el-option label="正在维修中" value="1"></el-option>
+      <el-form-item label="车辆状态" prop="vehicleStatus">
+        <el-select v-model="queryParams.vehicleStatus" placeholder="请选择车辆状态" clearable>
+          <el-option label="正常" value="正常"></el-option>
+          <el-option label="正在维修中" value="正在维修中"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="使用人" prop="driver">
+        <el-input
+          v-model="queryParams.driver"
+          placeholder="请输入使用人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -53,7 +45,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:station:add']"
+          v-hasPermi="['system:list:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -64,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:station:edit']"
+          v-hasPermi="['system:list:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -75,7 +67,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:station:remove']"
+          v-hasPermi="['system:list:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -85,26 +77,21 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:station:export']"
+          v-hasPermi="['system:list:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="stationList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="编号" align="center" prop="stationId" />
-      <el-table-column label="名称" align="center" prop="stationName" />
-      <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="容纳量" align="center" prop="capacity" />
-      <el-table-column label="负责人" align="center" prop="head" />
-      <el-table-column label="负责人电话" align="center" prop="phone" />
-      <el-table-column label="站点状态" align="center" prop="stationStatus" >
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_job_status" :value="scope.row.stationStatus"/>
-        </template>
-      </el-table-column>
+      <el-table-column label="车辆编号" align="center" prop="vehicleId" />
+      <el-table-column label="车牌号" align="center" prop="vehiclePlateNumber" />
+      <el-table-column label="车辆状态" align="center" prop="vehicleStatus" />
+      <el-table-column label="车辆类型" align="center" prop="vehicleType" />
+      <el-table-column label="使用人" align="center" prop="driver" />
+      <el-table-column label="容纳量" align="center" prop="vehicleCapacity" />
       <el-table-column label="备注" align="center" prop="notes" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -113,14 +100,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:station:edit']"
+            v-hasPermi="['system:list:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:station:remove']"
+            v-hasPermi="['system:list:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -134,38 +121,48 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改垃圾回收站管理对话框 -->
+    <!-- 添加或修改运输车辆对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="回收站编号" prop="stationId">
-          <el-input v-model="form.stationId" placeholder="请输入回收站编号" />
+        <el-form-item label="车辆编号" prop="vehicleId">
+          <el-input v-model="form.vehicleId" placeholder="请输入车辆编号" />
         </el-form-item>
-        <el-form-item label="名称" prop="stationName">
-          <el-input v-model="form.stationName" placeholder="请输入回收站名称" />
+        <el-form-item label="车牌号" prop="vehiclePlateNumber">
+          <el-input v-model="form.vehiclePlateNumber" placeholder="请输入车牌号" />
         </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入地址" />
+        <el-form-item label="车辆状态" prop="vehicleStatus">
+<!--          <el-select v-model="form.vehicleStatus" placeholder="请选择车辆状态" clearable>-->
+<!--            <el-option-->
+<!--              v-for="option in vehicleOptions"-->
+<!--              :key="option.value"-->
+<!--              :label="option.label"-->
+<!--              :value="option.value"-->
+<!--              v-slot="{ option }">-->
+<!--              <span :style="{ color: option.value === '正常' ? 'green' : 'red' }">{{ option.label }}</span>-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+          <el-select v-model="form.vehicleStatus" placeholder="请选择车辆状态" clearable>
+            <el-option label="正常" value="正常"></el-option>
+            <el-option label="正在维修中" value="正在维修中"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="容纳量" prop="capacity">
-          <el-input v-model="form.capacity" placeholder="请输入站点容纳量" />
+<!--        <el-table-column label="车辆类型" align="center" prop="vehicleType" />-->
+        <el-form-item label="车辆类型" prop="vehicleType">
+          <el-select v-model="form.vehicleType" placeholder="请选择车辆类型" clearable>
+            <el-option label="压缩式垃圾车" value="压缩式垃圾车"></el-option>
+            <el-option label="自卸式垃圾车" value="自卸式垃圾车"></el-option>
+            <el-option label="摆臂式垃圾车" value="摆臂式垃圾车"></el-option>
+            <el-option label="自装卸式垃圾车" value="自装卸式垃圾车"></el-option>
+            <el-option label="密封式垃圾车" value="密封式垃圾车"></el-option>
+            <el-option label="拉臂式垃圾车" value="拉臂式垃圾车"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="负责人" prop="head">
-          <el-input v-model="form.head" placeholder="请输入负责人姓名" />
+        <el-form-item label="使用人" prop="driver">
+          <el-input v-model="form.driver" placeholder="请输入使用人" />
         </el-form-item>
-        <el-form-item label="电话" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入负责人电话" />
+        <el-form-item label="容纳量" prop="vehicleCapacity">
+          <el-input v-model="form.vehicleCapacity" placeholder="请输入容纳量" />
         </el-form-item>
-        <el-form-item label="站点状态" prop="stationStatus">
-          <el-radio-group v-model="form.stationStatus">
-            <el-radio
-              v-for="dict in dict.type.sys_job_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-
-        </el-form-item>
-
         <el-form-item label="备注" prop="notes">
           <el-input v-model="form.notes" placeholder="请输入备注" />
         </el-form-item>
@@ -179,10 +176,10 @@
 </template>
 
 <script>
-import { listStation, getStation, delStation, addStation, updateStation } from "@/api/system/station";
+import { listList, getList, delList, addList, updateList } from "@/api/system/list";
 
 export default {
-  name: "Station",
+  name: "List",
   dicts: ['sys_job_status'],
   data() {
     return {
@@ -198,8 +195,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 垃圾回收站管理表格数据
-      stationList: [],
+      // 运输车辆表格数据
+      listList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -208,21 +205,27 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        stationId: null,
-        stationName: null,
-        address: null,
-        head: null,
-        stationStatus: null,
+        vehicleId: null,
+        vehiclePlateNumber: null,
+        vehicleStatus: null,
+        vehicleType: null,
+        driver: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        vehicleStatus: ''
+      },
+      vehicleOptions: [
+        { label: '正常', value: '正常' },
+        { label: '正在维修中', value: '正在维修中' }
+      ],
       // 表单校验
       rules: {
-        stationId: [
-          { required: true, message: "回收站编号不能为空", trigger: "blur" }
+        vehicleId: [
+          { required: true, message: "车辆编号不能为空", trigger: "blur" }
         ],
-        stationName: [
-          { required: true, message: "回收站名称不能为空", trigger: "blur" }
+        vehiclePlateNumber: [
+          { required: true, message: "车牌号不能为空", trigger: "blur" }
         ],
       }
     };
@@ -231,11 +234,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询垃圾回收站管理列表 */
+    /** 查询运输车辆列表 */
     getList() {
       this.loading = true;
-      listStation(this.queryParams).then(response => {
-        this.stationList = response.rows;
+      listList(this.queryParams).then(response => {
+        this.listList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -249,13 +252,12 @@ export default {
     reset() {
       this.form = {
         id: null,
-        stationId: null,
-        stationName: null,
-        address: null,
-        capacity: null,
-        head: null,
-        stationStatus: null,
-        phone: null,
+        vehicleId: null,
+        vehiclePlateNumber: null,
+        vehicleStatus: null,
+        vehicleType: null,
+        driver: null,
+        vehicleCapacity: null,
         notes: null
       };
       this.resetForm("form");
@@ -280,16 +282,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加垃圾回收站管理";
+      this.title = "添加运输车辆";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getStation(id).then(response => {
+      getList(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改垃圾回收站管理";
+        this.title = "修改运输车辆";
       });
     },
     /** 提交按钮 */
@@ -297,13 +299,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateStation(this.form).then(response => {
+            updateList(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addStation(this.form).then(response => {
+            addList(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -315,8 +317,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除垃圾回收站管理编号为"' + ids + '"的数据项？').then(function() {
-        return delStation(ids);
+      this.$modal.confirm('是否确认删除运输车辆编号为"' + ids + '"的数据项？').then(function() {
+        return delList(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -324,9 +326,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/station/export', {
+      this.download('system/list/export', {
         ...this.queryParams
-      }, `station_${new Date().getTime()}.xlsx`)
+      }, `list_${new Date().getTime()}.xlsx`)
     }
   }
 };

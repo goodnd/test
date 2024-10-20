@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.goodnight.domain;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -9,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 反馈与处理对象 sm_feedback
  * 
  * @author goodnight
- * @date 2024-10-14
+ * @date 2024-10-18
  */
 public class Feedback extends BaseEntity
 {
@@ -22,17 +24,22 @@ public class Feedback extends BaseEntity
     @Excel(name = "反馈编号")
     private String feedbackId;
 
-    /** 用户id */
-    @Excel(name = "用户id")
-    private Long userId;
+    /** 反馈人员 */
+    @Excel(name = "反馈人员")
+    private String fbUser;
 
-    /** 投诉地址 */
-    @Excel(name = "投诉地址")
+    /** 反馈地址 */
+    @Excel(name = "反馈地址")
     private String address;
 
     /** 反馈问题 */
     @Excel(name = "反馈问题")
     private String problem;
+
+    /** 反馈日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "反馈日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date fbTime;
 
     /** 处理人 */
     @Excel(name = "处理人")
@@ -46,7 +53,12 @@ public class Feedback extends BaseEntity
     @Excel(name = "反馈结果")
     private String fbResult;
 
-    public void setId(Long id)
+    /** 完成日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "完成日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date finishTime;
+
+    public void setId(Long id) 
     {
         this.id = id;
     }
@@ -64,14 +76,14 @@ public class Feedback extends BaseEntity
     {
         return feedbackId;
     }
-    public void setUserId(Long userId) 
+    public void setFbUser(String fbUser) 
     {
-        this.userId = userId;
+        this.fbUser = fbUser;
     }
 
-    public Long getUserId() 
+    public String getFbUser() 
     {
-        return userId;
+        return fbUser;
     }
     public void setAddress(String address) 
     {
@@ -90,6 +102,15 @@ public class Feedback extends BaseEntity
     public String getProblem() 
     {
         return problem;
+    }
+    public void setFbTime(Date fbTime) 
+    {
+        this.fbTime = fbTime;
+    }
+
+    public Date getFbTime() 
+    {
+        return fbTime;
     }
     public void setProcessor(String processor) 
     {
@@ -118,18 +139,29 @@ public class Feedback extends BaseEntity
     {
         return fbResult;
     }
+    public void setFinishTime(Date finishTime) 
+    {
+        this.finishTime = finishTime;
+    }
+
+    public Date getFinishTime() 
+    {
+        return finishTime;
+    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("feedbackId", getFeedbackId())
-            .append("userId", getUserId())
+            .append("fbUser", getFbUser())
             .append("address", getAddress())
             .append("problem", getProblem())
+            .append("fbTime", getFbTime())
             .append("processor", getProcessor())
             .append("fbStatus", getFbStatus())
             .append("fbResult", getFbResult())
+            .append("finishTime", getFinishTime())
             .toString();
     }
 }

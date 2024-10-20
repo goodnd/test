@@ -9,7 +9,7 @@ import java.util.List;
  * 垃圾回收站管理Service接口
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
 public interface IGarbageStationService 
 {

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.SiteMapper">
+    
+    <resultMap type="Site" id="SiteResult">
+        <result property="id"    column="id"    />
+        <result property="siteId"    column="site_id"    />
+        <result property="siteName"    column="site_name"    />
+        <result property="address"    column="address"    />
+        <result property="plot"    column="plot"    />
+        <result property="sitRecyclingStation"    column="sit_recycling_station"    />
+        <result property="recyclableCapacity"    column="recyclable_capacity"    />
+        <result property="kitchenWasteCapacity"    column="kitchen_waste_capacity"    />
+        <result property="hazardousWasteCapacity"    column="hazardous_waste_capacity"    />
+        <result property="otherWasteCapacity"    column="other_waste_capacity"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectSiteVo">
+        select id, site_id, site_name, address, plot, sit_recycling_station, recyclable_capacity, kitchen_waste_capacity, hazardous_waste_capacity, other_waste_capacity, notes from sm_site
+    </sql>
+
+    <select id="selectSiteList" parameterType="Site" resultMap="SiteResult">
+        <include refid="selectSiteVo"/>
+        <where>  
+            <if test="siteId != null  and siteId != ''"> and site_id = #{siteId}</if>
+            <if test="siteName != null  and siteName != ''"> and site_name like concat('%', #{siteName}, '%')</if>
+            <if test="plot != null  and plot != ''"> and plot like concat('%', #{plot}, '%')</if>
+            <if test="sitRecyclingStation != null  and sitRecyclingStation != ''"> and sit_recycling_station like concat('%', #{sitRecyclingStation}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSiteById" parameterType="Long" resultMap="SiteResult">
+        <include refid="selectSiteVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSite" parameterType="Site" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_site
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="siteId != null and siteId != ''">site_id,</if>
+            <if test="siteName != null and siteName != ''">site_name,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="plot != null and plot != ''">plot,</if>
+            <if test="sitRecyclingStation != null">sit_recycling_station,</if>
+            <if test="recyclableCapacity != null">recyclable_capacity,</if>
+            <if test="kitchenWasteCapacity != null">kitchen_waste_capacity,</if>
+            <if test="hazardousWasteCapacity != null">hazardous_waste_capacity,</if>
+            <if test="otherWasteCapacity != null">other_waste_capacity,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="siteId != null and siteId != ''">#{siteId},</if>
+            <if test="siteName != null and siteName != ''">#{siteName},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="plot != null and plot != ''">#{plot},</if>
+            <if test="sitRecyclingStation != null">#{sitRecyclingStation},</if>
+            <if test="recyclableCapacity != null">#{recyclableCapacity},</if>
+            <if test="kitchenWasteCapacity != null">#{kitchenWasteCapacity},</if>
+            <if test="hazardousWasteCapacity != null">#{hazardousWasteCapacity},</if>
+            <if test="otherWasteCapacity != null">#{otherWasteCapacity},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSite" parameterType="Site">
+        update sm_site
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="siteId != null and siteId != ''">site_id = #{siteId},</if>
+            <if test="siteName != null and siteName != ''">site_name = #{siteName},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="plot != null and plot != ''">plot = #{plot},</if>
+            <if test="sitRecyclingStation != null">sit_recycling_station = #{sitRecyclingStation},</if>
+            <if test="recyclableCapacity != null">recyclable_capacity = #{recyclableCapacity},</if>
+            <if test="kitchenWasteCapacity != null">kitchen_waste_capacity = #{kitchenWasteCapacity},</if>
+            <if test="hazardousWasteCapacity != null">hazardous_waste_capacity = #{hazardousWasteCapacity},</if>
+            <if test="otherWasteCapacity != null">other_waste_capacity = #{otherWasteCapacity},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSiteById" parameterType="Long">
+        delete from sm_site where id = #{id}
+    </delete>
+
+    <delete id="deleteSiteByIds" parameterType="String">
+        delete from sm_site where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,12 +1,9 @@
 import request from '@/utils/request'
-
-// //查询所有回收站点列表
-export function AllListStation() {
+// 查询所有垃圾回收站管理
+export function listAllStation() {
   return request({
     url: '/system/station/listAll',
     method: 'POST',
-
-
   })
 }
 

@@ -1,19 +1,21 @@
 package com.ruoyi.web.controller.goodnight.service.impl;
 
+import java.util.List;
+
 import com.ruoyi.web.controller.goodnight.domain.Feedback;
 import com.ruoyi.web.controller.goodnight.mapper.FeedbackMapper;
 import com.ruoyi.web.controller.goodnight.service.IFeedbackService;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
-import java.util.List;
 
 
 /**
  * 反馈与处理Service业务层处理
  * 
  * @author goodnight
- * @date 2024-10-14
+ * @date 2024-10-18
  */
 @Service
 public class FeedbackServiceImpl implements IFeedbackService
@@ -66,6 +68,9 @@ public class FeedbackServiceImpl implements IFeedbackService
     @Override
     public int updateFeedback(Feedback feedback)
     {
+        if(feedback.getFinishTime()==null){
+            feedbackMapper.updateFeedbackFinishTime(feedback.getId());
+        }
         return feedbackMapper.updateFeedback(feedback);
     }
 

@@ -1,6 +1,11 @@
 import request from '@/utils/request'
-
-
+//查询所有站点
+export function listAllSite() {
+  return request({
+    url: '/system/site/listAll',
+    method: 'POST',
+  })
+}
 
 // 查询垃圾站点管理列表
 export function listSite(query) {

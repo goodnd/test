@@ -1,6 +1,6 @@
 package com.ruoyi.web.controller.goodnight.mapper;
 
-import com.ruoyi.web.controller.goodnight.domain.SiteManagement;
+import com.ruoyi.web.controller.goodnight.domain.Site;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import java.util.List;
  * 垃圾站点管理Mapper接口
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
-public interface SiteManagementMapper 
+public interface SiteMapper 
 {
     /**
      * 查询垃圾站点管理
@@ -19,31 +19,31 @@ public interface SiteManagementMapper
      * @param id 垃圾站点管理主键
      * @return 垃圾站点管理
      */
-    public SiteManagement selectSiteManagementById(Long id);
+    public Site selectSiteById(Long id);
 
     /**
      * 查询垃圾站点管理列表
      * 
-     * @param siteManagement 垃圾站点管理
+     * @param site 垃圾站点管理
      * @return 垃圾站点管理集合
      */
-    public List<SiteManagement> selectSiteManagementList(SiteManagement siteManagement);
+    public List<Site> selectSiteList(Site site);
 
     /**
      * 新增垃圾站点管理
      * 
-     * @param siteManagement 垃圾站点管理
+     * @param site 垃圾站点管理
      * @return 结果
      */
-    public int insertSiteManagement(SiteManagement siteManagement);
+    public int insertSite(Site site);
 
     /**
      * 修改垃圾站点管理
      * 
-     * @param siteManagement 垃圾站点管理
+     * @param site 垃圾站点管理
      * @return 结果
      */
-    public int updateSiteManagement(SiteManagement siteManagement);
+    public int updateSite(Site site);
 
     /**
      * 删除垃圾站点管理
@@ -51,7 +51,7 @@ public interface SiteManagementMapper
      * @param id 垃圾站点管理主键
      * @return 结果
      */
-    public int deleteSiteManagementById(Long id);
+    public int deleteSiteById(Long id);
 
     /**
      * 批量删除垃圾站点管理
@@ -59,5 +59,5 @@ public interface SiteManagementMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteSiteManagementByIds(Long[] ids);
+    public int deleteSiteByIds(Long[] ids);
 }

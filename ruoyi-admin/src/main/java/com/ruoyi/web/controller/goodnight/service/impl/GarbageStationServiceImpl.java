@@ -1,7 +1,7 @@
 package com.ruoyi.web.controller.goodnight.service.impl;
 
 import java.util.List;
-import com.ruoyi.common.utils.DateUtils;
+
 import com.ruoyi.web.controller.goodnight.domain.GarbageStation;
 import com.ruoyi.web.controller.goodnight.mapper.GarbageStationMapper;
 import com.ruoyi.web.controller.goodnight.service.IGarbageStationService;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * 垃圾回收站管理Service业务层处理
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
 @Service
 public class GarbageStationServiceImpl implements IGarbageStationService
@@ -56,7 +56,6 @@ public class GarbageStationServiceImpl implements IGarbageStationService
     @Override
     public int insertGarbageStation(GarbageStation garbageStation)
     {
-        garbageStation.setCreateTime(DateUtils.getNowDate());
         return garbageStationMapper.insertGarbageStation(garbageStation);
     }
 

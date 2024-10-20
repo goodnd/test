@@ -4,12 +4,11 @@ import com.ruoyi.web.controller.goodnight.domain.Feedback;
 
 import java.util.List;
 
-
 /**
  * 反馈与处理Mapper接口
  * 
  * @author goodnight
- * @date 2024-10-14
+ * @date 2024-10-18
  */
 public interface FeedbackMapper 
 {
@@ -60,4 +59,11 @@ public interface FeedbackMapper
      * @return 结果
      */
     public int deleteFeedbackByIds(Long[] ids);
+
+    /**
+     * 更新反馈完成时间为空
+     * @param id
+     * @return
+     */
+    public boolean updateFeedbackFinishTime(Long id);
 }

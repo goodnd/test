@@ -7,28 +7,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="Feedback" id="FeedbackResult">
         <result property="id"    column="id"    />
         <result property="feedbackId"    column="feedbackId"    />
-        <result property="userId"    column="userId"    />
+        <result property="fbUser"    column="fbUser"    />
         <result property="address"    column="address"    />
         <result property="problem"    column="problem"    />
+        <result property="fbTime"    column="fbTime"    />
         <result property="processor"    column="processor"    />
         <result property="fbStatus"    column="fbStatus"    />
         <result property="fbResult"    column="fbResult"    />
+        <result property="finishTime"    column="finishTime"    />
     </resultMap>
 
     <sql id="selectFeedbackVo">
-        select id, feedbackId, userId, address, problem, processor, fbStatus, fbResult from sm_feedback
+        select id, feedbackId, fbUser, address, problem, fbTime, processor, fbStatus, fbResult, finishTime from sm_feedback
     </sql>
 
     <select id="selectFeedbackList" parameterType="Feedback" resultMap="FeedbackResult">
         <include refid="selectFeedbackVo"/>
         <where>  
             <if test="feedbackId != null  and feedbackId != ''"> and feedbackId like concat('%', #{feedbackId}, '%')</if>
-            <if test="userId != null "> and userId = #{userId}</if>
             <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
-            <if test="problem != null  and problem != ''"> and problem = #{problem}</if>
-            <if test="processor != null  and processor != ''"> and processor = #{processor}</if>
+            <if test="processor != null  and processor != ''"> and processor like concat('%', #{processor}, '%')</if>
             <if test="fbStatus != null  and fbStatus != ''"> and fbStatus = #{fbStatus}</if>
-            <if test="fbResult != null  and fbResult != ''"> and fbResult = #{fbResult}</if>
         </where>
     </select>
     
@@ -41,21 +40,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sm_feedback
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="feedbackId != null and feedbackId != ''">feedbackId,</if>
-            <if test="userId != null">userId,</if>
+            <if test="fbUser != null">fbUser,</if>
             <if test="address != null">address,</if>
             <if test="problem != null">problem,</if>
+            <if test="fbTime != null">fbTime,</if>
             <if test="processor != null">processor,</if>
             <if test="fbStatus != null">fbStatus,</if>
             <if test="fbResult != null">fbResult,</if>
+            <if test="finishTime != null">finishTime,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="feedbackId != null and feedbackId != ''">#{feedbackId},</if>
-            <if test="userId != null">#{userId},</if>
+            <if test="fbUser != null">#{fbUser},</if>
             <if test="address != null">#{address},</if>
             <if test="problem != null">#{problem},</if>
+            <if test="fbTime != null">#{fbTime},</if>
             <if test="processor != null">#{processor},</if>
             <if test="fbStatus != null">#{fbStatus},</if>
             <if test="fbResult != null">#{fbResult},</if>
+            <if test="finishTime != null">#{finishTime},</if>
          </trim>
     </insert>
 
@@ -63,12 +66,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sm_feedback
         <trim prefix="SET" suffixOverrides=",">
             <if test="feedbackId != null and feedbackId != ''">feedbackId = #{feedbackId},</if>
-            <if test="userId != null">userId = #{userId},</if>
+            <if test="fbUser != null">fbUser = #{fbUser},</if>
             <if test="address != null">address = #{address},</if>
             <if test="problem != null">problem = #{problem},</if>
+            <if test="fbTime != null">fbTime = #{fbTime},</if>
             <if test="processor != null">processor = #{processor},</if>
             <if test="fbStatus != null">fbStatus = #{fbStatus},</if>
             <if test="fbResult != null">fbResult = #{fbResult},</if>
+            <if test="finishTime != null">finishTime = #{finishTime},</if>
         </trim>
         where id = #{id}
     </update>
@@ -78,9 +83,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteFeedbackByIds" parameterType="String">
-        delete from sm_feedback where id in
+        delete from sm_feedback where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <update id="updateFeedbackFinishTime" parameterType="Long">
+        UPDATE sm_feedback
+        SET finishTime = NULL
+        WHERE id = #{id}
+    </update>
+
 </mapper>

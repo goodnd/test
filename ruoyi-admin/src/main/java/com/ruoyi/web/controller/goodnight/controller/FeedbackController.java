@@ -27,7 +27,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 反馈与处理Controller
  * 
  * @author goodnight
- * @date 2024-10-14
+ * @date 2024-10-18
  */
 @RestController
 @RequestMapping("/system/feedback")
@@ -90,6 +90,7 @@ public class FeedbackController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Feedback feedback)
     {
+
         return toAjax(feedbackService.updateFeedback(feedback));
     }
 

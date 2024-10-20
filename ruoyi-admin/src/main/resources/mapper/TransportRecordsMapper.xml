@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.TransportRecordsMapper">
+    
+    <resultMap type="TransportRecords" id="TransportRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="transportId"    column="transport_id"    />
+        <result property="transportDay"    column="transport_day"    />
+        <result property="transportSites"    column="transport_sites"    />
+        <result property="transportStation"    column="transport_station"    />
+        <result property="transportStartTime"    column="transport_start_time"    />
+        <result property="driver"    column="driver"    />
+        <result property="vehiclePlateNumber"    column="vehiclePlateNumber"    />
+        <result property="transportStatus"    column="transport_status"    />
+        <result property="transportFinishTime"    column="transport_finish_time"    />
+    </resultMap>
+
+    <sql id="selectTransportRecordsVo">
+        select id, transport_id, transport_day, transport_sites, transport_station, transport_start_time, driver, vehiclePlateNumber, transport_status, transport_finish_time from sm_transport_records
+    </sql>
+
+    <select id="selectTransportRecordsList" parameterType="TransportRecords" resultMap="TransportRecordsResult">
+        <include refid="selectTransportRecordsVo"/>
+        <where>  
+            <if test="transportId != null  and transportId != ''"> and transport_id like concat('%', #{transportId}, '%')</if>
+            <if test="transportDay != null "> and transport_day = #{transportDay}</if>
+            <if test="transportSites != null  and transportSites != ''"> and transport_sites like concat('%', #{transportSites}, '%')</if>
+            <if test="transportStation != null  and transportStation != ''"> and transport_station like concat('%', #{transportStation}, '%')</if>
+            <if test="transportStatus != null  and transportStatus != ''"> and transport_status = #{transportStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectTransportRecordsById" parameterType="Long" resultMap="TransportRecordsResult">
+        <include refid="selectTransportRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTransportRecords" parameterType="TransportRecords">
+        insert into sm_transport_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="transportId != null and transportId != ''">transport_id,</if>
+            <if test="transportDay != null">transport_day,</if>
+            <if test="transportSites != null">transport_sites,</if>
+            <if test="transportStation != null">transport_station,</if>
+            <if test="transportStartTime != null">transport_start_time,</if>
+            <if test="driver != null">driver,</if>
+            <if test="vehiclePlateNumber != null">vehiclePlateNumber,</if>
+            <if test="transportStatus != null">transport_status,</if>
+            <if test="transportFinishTime != null">transport_finish_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="transportId != null and transportId != ''">#{transportId},</if>
+            <if test="transportDay != null">#{transportDay},</if>
+            <if test="transportSites != null">#{transportSites},</if>
+            <if test="transportStation != null">#{transportStation},</if>
+            <if test="transportStartTime != null">#{transportStartTime},</if>
+            <if test="driver != null">#{driver},</if>
+            <if test="vehiclePlateNumber != null">#{vehiclePlateNumber},</if>
+            <if test="transportStatus != null">#{transportStatus},</if>
+            <if test="transportFinishTime != null">#{transportFinishTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTransportRecords" parameterType="TransportRecords">
+        update sm_transport_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transportId != null and transportId != ''">transport_id = #{transportId},</if>
+            <if test="transportDay != null">transport_day = #{transportDay},</if>
+            <if test="transportSites != null">transport_sites = #{transportSites},</if>
+            <if test="transportStation != null">transport_station = #{transportStation},</if>
+            <if test="transportStartTime != null">transport_start_time = #{transportStartTime},</if>
+            <if test="driver != null">driver = #{driver},</if>
+            <if test="vehiclePlateNumber != null">vehiclePlateNumber = #{vehiclePlateNumber},</if>
+            <if test="transportStatus != null">transport_status = #{transportStatus},</if>
+            <if test="transportFinishTime != null">transport_finish_time = #{transportFinishTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTransportRecordsById" parameterType="Long">
+        delete from sm_transport_records where id = #{id}
+    </delete>
+
+    <delete id="deleteTransportRecordsByIds" parameterType="String">
+        delete from sm_transport_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

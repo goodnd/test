@@ -6,25 +6,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="GarbageStation" id="GarbageStationResult">
         <result property="id"    column="id"    />
+        <result property="stationId"    column="station_id"    />
         <result property="stationName"    column="station_name"    />
         <result property="address"    column="address"    />
+        <result property="capacity"    column="capacity"    />
         <result property="head"    column="head"    />
+        <result property="stationStatus"    column="station_status"    />
         <result property="phone"    column="phone"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
+        <result property="notes"    column="notes"    />
     </resultMap>
 
     <sql id="selectGarbageStationVo">
-        select id, station_name, address, head, phone, create_by, create_time from sm_garbage_station
+        select id, station_id, station_name, address, capacity, head, station_status, phone, notes from sm_garbage_station
     </sql>
 
     <select id="selectGarbageStationList" parameterType="GarbageStation" resultMap="GarbageStationResult">
         <include refid="selectGarbageStationVo"/>
         <where>  
+            <if test="stationId != null  and stationId != ''"> and station_id = #{stationId}</if>
             <if test="stationName != null  and stationName != ''"> and station_name like concat('%', #{stationName}, '%')</if>
             <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
             <if test="head != null  and head != ''"> and head like concat('%', #{head}, '%')</if>
-            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="stationStatus != null  and stationStatus != ''"> and station_status = #{stationStatus}</if>
         </where>
     </select>
     
@@ -37,33 +40,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sm_garbage_station
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
+            <if test="stationId != null and stationId != ''">station_id,</if>
             <if test="stationName != null and stationName != ''">station_name,</if>
             <if test="address != null">address,</if>
+            <if test="capacity != null">capacity,</if>
             <if test="head != null">head,</if>
+            <if test="stationStatus != null">station_status,</if>
             <if test="phone != null">phone,</if>
-            <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
+            <if test="notes != null">notes,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
+            <if test="stationId != null and stationId != ''">#{stationId},</if>
             <if test="stationName != null and stationName != ''">#{stationName},</if>
             <if test="address != null">#{address},</if>
+            <if test="capacity != null">#{capacity},</if>
             <if test="head != null">#{head},</if>
+            <if test="stationStatus != null">#{stationStatus},</if>
             <if test="phone != null">#{phone},</if>
-            <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
+            <if test="notes != null">#{notes},</if>
          </trim>
     </insert>
 
     <update id="updateGarbageStation" parameterType="GarbageStation">
         update sm_garbage_station
         <trim prefix="SET" suffixOverrides=",">
+            <if test="stationId != null and stationId != ''">station_id = #{stationId},</if>
             <if test="stationName != null and stationName != ''">station_name = #{stationName},</if>
             <if test="address != null">address = #{address},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
             <if test="head != null">head = #{head},</if>
+            <if test="stationStatus != null">station_status = #{stationStatus},</if>
             <if test="phone != null">phone = #{phone},</if>
-            <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="notes != null">notes = #{notes},</if>
         </trim>
         where id = #{id}
     </update>

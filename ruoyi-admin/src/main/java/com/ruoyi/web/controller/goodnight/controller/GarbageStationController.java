@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.web.controller.goodnight.domain.GarbageStation;
 import com.ruoyi.web.controller.goodnight.domain.Prize;
 import com.ruoyi.web.controller.goodnight.service.IGarbageStationService;
+import com.ruoyi.web.controller.goodnight.service.IPrizeService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 垃圾回收站管理Controller
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
 @RestController
 @RequestMapping("/system/station")
@@ -36,12 +37,16 @@ public class GarbageStationController extends BaseController
 {
     @Autowired
     private IGarbageStationService garbageStationService;
-    // 获取所有垃圾回收站点信息
+
+    /**
+     * 查询所有垃圾回收站管理列表
+     */
     @PostMapping(value = "listAll")
     public  AjaxResult listAll(){
         List<GarbageStation> dataList = garbageStationService.selectGarbageStationList(null);
         return AjaxResult.success(dataList);
     }
+
 
     /**
      * 查询垃圾回收站管理列表

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.VehicleListMapper">
+    
+    <resultMap type="VehicleList" id="VehicleListResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="vehiclePlateNumber"    column="vehiclePlateNumber"    />
+        <result property="vehicleStatus"    column="vehicle_status"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="driver"    column="driver"    />
+        <result property="vehicleCapacity"    column="vehicle_capacity"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectVehicleListVo">
+        select id, vehicle_id, vehiclePlateNumber, vehicle_status, vehicle_type, driver, vehicle_capacity, notes from sm_vehicle_list
+    </sql>
+
+    <select id="selectVehicleListList" parameterType="VehicleList" resultMap="VehicleListResult">
+        <include refid="selectVehicleListVo"/>
+        <where>  
+            <if test="vehicleId != null  and vehicleId != ''"> and vehicle_id like concat('%', #{vehicleId}, '%')</if>
+            <if test="vehiclePlateNumber != null  and vehiclePlateNumber != ''"> and vehiclePlateNumber = #{vehiclePlateNumber}</if>
+            <if test="vehicleStatus != null  and vehicleStatus != ''"> and vehicle_status = #{vehicleStatus}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="driver != null  and driver != ''"> and driver like concat('%', #{driver}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectVehicleListById" parameterType="Long" resultMap="VehicleListResult">
+        <include refid="selectVehicleListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVehicleList" parameterType="VehicleList" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_vehicle_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null and vehicleId != ''">vehicle_id,</if>
+            <if test="vehiclePlateNumber != null and vehiclePlateNumber != ''">vehiclePlateNumber,</if>
+            <if test="vehicleStatus != null">vehicle_status,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="driver != null">driver,</if>
+            <if test="vehicleCapacity != null">vehicle_capacity,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null and vehicleId != ''">#{vehicleId},</if>
+            <if test="vehiclePlateNumber != null and vehiclePlateNumber != ''">#{vehiclePlateNumber},</if>
+            <if test="vehicleStatus != null">#{vehicleStatus},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="driver != null">#{driver},</if>
+            <if test="vehicleCapacity != null">#{vehicleCapacity},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehicleList" parameterType="VehicleList">
+        update sm_vehicle_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null and vehicleId != ''">vehicle_id = #{vehicleId},</if>
+            <if test="vehiclePlateNumber != null and vehiclePlateNumber != ''">vehiclePlateNumber = #{vehiclePlateNumber},</if>
+            <if test="vehicleStatus != null">vehicle_status = #{vehicleStatus},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="driver != null">driver = #{driver},</if>
+            <if test="vehicleCapacity != null">vehicle_capacity = #{vehicleCapacity},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehicleListById" parameterType="Long">
+        delete from sm_vehicle_list where id = #{id}
+    </delete>
+
+    <delete id="deleteVehicleListByIds" parameterType="String">
+        delete from sm_vehicle_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

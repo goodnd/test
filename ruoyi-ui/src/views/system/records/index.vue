@@ -1,29 +1,37 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="垃圾名称" prop="garbageName">
+      <el-form-item label="编号" prop="collectionId">
         <el-input
-          v-model="queryParams.garbageName"
-          placeholder="请输入垃圾名称"
+          v-model="queryParams.collectionId"
+          placeholder="请输入编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="垃圾类别" prop="garbageCategory">
+      <el-form-item label="小区名称" prop="communityName">
         <el-input
-          v-model="queryParams.garbageCategory"
-          placeholder="请输入垃圾类别"
+          v-model="queryParams.communityName"
+          placeholder="请输入小区名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建人" prop="creatBy">
+      <el-form-item label="收集者" prop="collectorName">
         <el-input
-          v-model="queryParams.creatBy"
-          placeholder="请输入创建人"
+          v-model="queryParams.collectorName"
+          placeholder="请输入收集者"
           clearable
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="收集时间" prop="collectionTime">
+        <el-date-picker clearable
+          v-model="queryParams.collectionTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择收集时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -39,7 +47,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:sorting:add']"
+          v-hasPermi="['system:records:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -50,7 +58,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:sorting:edit']"
+          v-hasPermi="['system:records:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -61,7 +69,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:sorting:remove']"
+          v-hasPermi="['system:records:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -71,24 +79,25 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:sorting:export']"
+          v-hasPermi="['system:records:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="sortingList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="recordsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="垃圾名称" align="center" prop="garbageName" />
-      <el-table-column label="垃圾类别" align="center" prop="garbageCategory" />
-      <el-table-column label="垃圾图片" align="center" prop="garbageImg" width="100">
+      <el-table-column label="编号" align="center" prop="collectionId" />
+      <el-table-column label="小区名称" align="center" prop="communityName" />
+      <el-table-column label="收集数量" align="center" prop="garbageQuantity" />
+      <el-table-column label="收集者" align="center" prop="collectorName" />
+      <el-table-column label="收集时间" align="center" prop="collectionTime" width="180">
         <template slot-scope="scope">
-          <image-preview :src="scope.row.garbageImg" :width="50" :height="50"/>
+          <span>{{ parseTime(scope.row.collectionTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" prop="creatBy" />
-      <el-table-column label="备注" align="center" prop="remake" />
+      <el-table-column label="备注消息" align="center" prop="notes" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -96,14 +105,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:sorting:edit']"
+            v-hasPermi="['system:records:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:sorting:remove']"
+            v-hasPermi="['system:records:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -117,23 +126,31 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改垃圾分类管理对话框 -->
+    <!-- 添加或修改垃圾收集记录管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="垃圾名称" prop="garbageName">
-          <el-input v-model="form.garbageName" placeholder="请输入垃圾名称" />
+        <el-form-item label="编号" prop="collectionId">
+          <el-input v-model="form.collectionId" placeholder="请输入编号" />
         </el-form-item>
-        <el-form-item label="垃圾类别" prop="garbageCategory">
-          <el-input v-model="form.garbageCategory" placeholder="请输入垃圾类别" />
+        <el-form-item label="小区名称" prop="communityName">
+          <el-input v-model="form.communityName" placeholder="请输入小区名称" />
         </el-form-item>
-        <el-form-item label="垃圾图片" prop="garbageImg">
-          <image-upload v-model="form.garbageImg"/>
+        <el-form-item label="收集数量" prop="garbageQuantity">
+          <el-input v-model="form.garbageQuantity" placeholder="请输入收集数量" />
         </el-form-item>
-        <el-form-item label="创建人" prop="creatBy">
-          <el-input v-model="form.creatBy" placeholder="请输入创建人" />
+        <el-form-item label="收集者" prop="collectorName">
+          <el-input v-model="form.collectorName" placeholder="请输入收集者" />
         </el-form-item>
-        <el-form-item label="备注" prop="remake">
-          <el-input v-model="form.remake" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="收集时间" prop="collectionTime">
+          <el-date-picker clearable
+            v-model="form.collectionTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择收集时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注消息" prop="notes">
+          <el-input v-model="form.notes" placeholder="请输入备注消息" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -145,10 +162,10 @@
 </template>
 
 <script>
-import { listSorting, getSorting, delSorting, addSorting, updateSorting } from "@/api/system/sorting";
+import { listRecords, getRecords, delRecords, addRecords, updateRecords } from "@/api/system/records";
 
 export default {
-  name: "Sorting",
+  name: "Records",
   data() {
     return {
       // 遮罩层
@@ -163,8 +180,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 垃圾分类管理表格数据
-      sortingList: [],
+      // 垃圾收集记录管理表格数据
+      recordsList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -173,14 +190,18 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        garbageName: null,
-        garbageCategory: null,
-        creatBy: null,
+        collectionId: null,
+        communityName: null,
+        collectorName: null,
+        collectionTime: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        collectionId: [
+          { required: true, message: "编号不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -188,11 +209,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询垃圾分类管理列表 */
+    /** 查询垃圾收集记录管理列表 */
     getList() {
       this.loading = true;
-      listSorting(this.queryParams).then(response => {
-        this.sortingList = response.rows;
+      listRecords(this.queryParams).then(response => {
+        this.recordsList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -206,11 +227,12 @@ export default {
     reset() {
       this.form = {
         id: null,
-        garbageName: null,
-        garbageCategory: null,
-        garbageImg: null,
-        creatBy: null,
-        remake: null
+        collectionId: null,
+        communityName: null,
+        garbageQuantity: null,
+        collectorName: null,
+        collectionTime: null,
+        notes: null
       };
       this.resetForm("form");
     },
@@ -234,16 +256,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加垃圾分类管理";
+      this.title = "添加垃圾收集记录管理";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getSorting(id).then(response => {
+      getRecords(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改垃圾分类管理";
+        this.title = "修改垃圾收集记录管理";
       });
     },
     /** 提交按钮 */
@@ -251,13 +273,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateSorting(this.form).then(response => {
+            updateRecords(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSorting(this.form).then(response => {
+            addRecords(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -269,8 +291,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除垃圾分类管理编号为"' + ids + '"的数据项？').then(function() {
-        return delSorting(ids);
+      this.$modal.confirm('是否确认删除垃圾收集记录管理编号为"' + ids + '"的数据项？').then(function() {
+        return delRecords(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -278,9 +300,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/sorting/export', {
+      this.download('system/records/export', {
         ...this.queryParams
-      }, `sorting_${new Date().getTime()}.xlsx`)
+      }, `records_${new Date().getTime()}.xlsx`)
     }
   }
 };

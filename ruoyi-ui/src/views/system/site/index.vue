@@ -1,19 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="编号" prop="siteId">
+        <el-input
+          v-model="queryParams.siteId"
+          placeholder="请输入编号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="站点名称" prop="siteName">
         <el-input
           v-model="queryParams.siteName"
           placeholder="请输入站点名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-
-      </el-form-item>
-      <el-form-item label="地址" prop="address">
-        <el-input
-          v-model="queryParams.address"
-          placeholder="请输入地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -32,11 +31,10 @@
 <!--          placeholder="请输入所属回收站"-->
 <!--          clearable-->
 <!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
+<!--  <template>
+ />-->
         <template>
-          <el-select v-model="queryParams.sitRecyclingStation"
-                     clearable
-                     @keyup.enter.native="handleQuery" placeholder="请选择所属回收站">
+          <el-select v-model="form.sitRecyclingStation" placeholder="请选择所属回收站">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -45,14 +43,6 @@
             </el-option>
           </el-select>
         </template>
-      </el-form-item>
-      <el-form-item label="创建人" prop="createBy">
-        <el-input
-          v-model="queryParams.createBy"
-          placeholder="请输入创建人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -108,13 +98,17 @@
 
     <el-table v-loading="loading" :data="siteList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号
-" align="center" prop="id" />
+<!--      <el-table-column label="序号" align="center" prop="id" />-->
+      <el-table-column label="编号" align="center" prop="siteId" />
       <el-table-column label="站点名称" align="center" prop="siteName" />
       <el-table-column label="地址" align="center" prop="address" />
       <el-table-column label="所属小区" align="center" prop="plot" />
-      <el-table-column label="回收站" align="center" prop="sitRecyclingStation" />
-      <el-table-column label="创建人" align="center" prop="createBy" />
+      <el-table-column label="所属回收站" align="center" prop="sitRecyclingStation" />
+      <el-table-column label="可回收垃圾容纳量" align="center" prop="recyclableCapacity" />
+      <el-table-column label="厨余垃圾容纳量" align="center" prop="kitchenWasteCapacity" />
+      <el-table-column label="有害垃圾容纳量" align="center" prop="hazardousWasteCapacity" />
+      <el-table-column label="其他垃圾容纳量" align="center" prop="otherWasteCapacity" />
+      <el-table-column label="备注" align="center" prop="notes" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -146,6 +140,9 @@
     <!-- 添加或修改垃圾站点管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="编号" prop="siteId">
+          <el-input v-model="form.siteId" placeholder="请输入编号" />
+        </el-form-item>
         <el-form-item label="站点名称" prop="siteName">
           <el-input v-model="form.siteName" placeholder="请输入站点名称" />
         </el-form-item>
@@ -156,17 +153,31 @@
           <el-input v-model="form.plot" placeholder="请输入所属小区" />
         </el-form-item>
         <el-form-item label="回收站" prop="sitRecyclingStation">
-          <el-select v-model="form.sitRecyclingStation" placeholder="请选择回收站名称">
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.stationName"
-              :value="item.stationName">
-            </el-option>
-          </el-select>
+          <template>
+            <el-select v-model="form.sitRecyclingStation" placeholder="请选择所属回收站">
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.stationName"
+                :value="item.stationName">
+              </el-option>
+            </el-select>
+          </template>
         </el-form-item>
-        <el-form-item label="创建人" prop="createBy">
-          <el-input v-model="form.createBy" placeholder="请输入创建人名称" />
+        <el-form-item label="可回收垃圾容纳量" prop="recyclableCapacity">
+          <el-input v-model="form.recyclableCapacity" placeholder="请输入可回收垃圾容纳量" />
+        </el-form-item>
+        <el-form-item label="厨余垃圾容纳量" prop="kitchenWasteCapacity">
+          <el-input v-model="form.kitchenWasteCapacity" placeholder="请输入厨余垃圾容纳量" />
+        </el-form-item>
+        <el-form-item label="有害垃圾容纳量" prop="hazardousWasteCapacity">
+          <el-input v-model="form.hazardousWasteCapacity" placeholder="请输入有害垃圾容纳量" />
+        </el-form-item>
+        <el-form-item label="其他垃圾容纳量" prop="otherWasteCapacity">
+          <el-input v-model="form.otherWasteCapacity" placeholder="请输入其他垃圾容纳量" />
+        </el-form-item>
+        <el-form-item label="备注" prop="notes">
+          <el-input v-model="form.notes" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -179,13 +190,13 @@
 
 <script>
 import { listSite, getSite, delSite, addSite, updateSite } from "@/api/system/site";
-import { AllListStation } from "@/api/system/station";
+import { listAllStation} from "@/api/system/station";
 
 export default {
   name: "Site",
   data() {
     return {
-      options: [
+      options:[
 
       ],
       // 遮罩层
@@ -210,16 +221,18 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        siteId: null,
         siteName: null,
-        address: null,
         plot: null,
         sitRecyclingStation: null,
-        createBy: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        siteId: [
+          { required: true, message: "编号不能为空", trigger: "blur" }
+        ],
         siteName: [
           { required: true, message: "站点名称不能为空", trigger: "blur" }
         ],
@@ -234,12 +247,17 @@ export default {
   },
   created() {
     this.getList();
-    this.getAllListStation();
+    this.getAllStation();
   },
   methods: {
-    /** 查询站点下拉列表*/
-    getAllListStation() {
-      AllListStation().then(response => {
+    /**查询所有回收站点 listAllPrize().then(response => {
+        this.options = response.data;
+
+        // this.options = response.rows;
+      });
+     },*/
+    getAllStation(){
+      listAllStation().then(response => {
         this.options = response.data;
       });
     },
@@ -261,14 +279,16 @@ export default {
     reset() {
       this.form = {
         id: null,
+        siteId: null,
         siteName: null,
         address: null,
         plot: null,
         sitRecyclingStation: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null
+        recyclableCapacity: null,
+        kitchenWasteCapacity: null,
+        hazardousWasteCapacity: null,
+        otherWasteCapacity: null,
+        notes: null
       };
       this.resetForm("form");
     },

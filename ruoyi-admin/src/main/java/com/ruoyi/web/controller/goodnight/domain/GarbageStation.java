@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 垃圾回收站管理对象 sm_garbage_station
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
 public class GarbageStation extends BaseEntity
 {
@@ -17,6 +17,10 @@ public class GarbageStation extends BaseEntity
 
     /** 序号 */
     private Long id;
+
+    /** 回收站编号 */
+    @Excel(name = "回收站编号")
+    private String stationId;
 
     /** 回收站名称 */
     @Excel(name = "回收站名称")
@@ -26,13 +30,25 @@ public class GarbageStation extends BaseEntity
     @Excel(name = "地址")
     private String address;
 
+    /** 站点容纳量 */
+    @Excel(name = "站点容纳量")
+    private String capacity;
+
     /** 负责人姓名 */
     @Excel(name = "负责人姓名")
     private String head;
 
+    /** 站点状态 */
+    @Excel(name = "站点状态")
+    private String stationStatus;
+
     /** 负责人电话 */
     @Excel(name = "负责人电话")
     private String phone;
+
+    /** 备注 */
+    @Excel(name = "备注")
+    private String notes;
 
     public void setId(Long id) 
     {
@@ -42,6 +58,15 @@ public class GarbageStation extends BaseEntity
     public Long getId() 
     {
         return id;
+    }
+    public void setStationId(String stationId) 
+    {
+        this.stationId = stationId;
+    }
+
+    public String getStationId() 
+    {
+        return stationId;
     }
     public void setStationName(String stationName) 
     {
@@ -61,6 +86,15 @@ public class GarbageStation extends BaseEntity
     {
         return address;
     }
+    public void setCapacity(String capacity) 
+    {
+        this.capacity = capacity;
+    }
+
+    public String getCapacity() 
+    {
+        return capacity;
+    }
     public void setHead(String head) 
     {
         this.head = head;
@@ -69,6 +103,15 @@ public class GarbageStation extends BaseEntity
     public String getHead() 
     {
         return head;
+    }
+    public void setStationStatus(String stationStatus) 
+    {
+        this.stationStatus = stationStatus;
+    }
+
+    public String getStationStatus() 
+    {
+        return stationStatus;
     }
     public void setPhone(String phone) 
     {
@@ -79,17 +122,28 @@ public class GarbageStation extends BaseEntity
     {
         return phone;
     }
+    public void setNotes(String notes) 
+    {
+        this.notes = notes;
+    }
+
+    public String getNotes() 
+    {
+        return notes;
+    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
+            .append("stationId", getStationId())
             .append("stationName", getStationName())
             .append("address", getAddress())
+            .append("capacity", getCapacity())
             .append("head", getHead())
+            .append("stationStatus", getStationStatus())
             .append("phone", getPhone())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
+            .append("notes", getNotes())
             .toString();
     }
 }

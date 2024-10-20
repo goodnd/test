@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.GarbageCollectionRecordsMapper">
+    
+    <resultMap type="GarbageCollectionRecords" id="GarbageCollectionRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="collectionId"    column="collectionId"    />
+        <result property="communityName"    column="community_name"    />
+        <result property="garbageQuantity"    column="garbage_quantity"    />
+        <result property="collectorName"    column="collector_name"    />
+        <result property="collectionTime"    column="collection_time"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectGarbageCollectionRecordsVo">
+        select id, collectionId, community_name, garbage_quantity, collector_name, collection_time, notes from garbage_collection_records
+    </sql>
+
+    <select id="selectGarbageCollectionRecordsList" parameterType="GarbageCollectionRecords" resultMap="GarbageCollectionRecordsResult">
+        <include refid="selectGarbageCollectionRecordsVo"/>
+        <where>  
+            <if test="collectionId != null  and collectionId != ''"> and collectionId = #{collectionId}</if>
+            <if test="communityName != null  and communityName != ''"> and community_name like concat('%', #{communityName}, '%')</if>
+            <if test="collectorName != null  and collectorName != ''"> and collector_name like concat('%', #{collectorName}, '%')</if>
+            <if test="collectionTime != null "> and collection_time = #{collectionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectGarbageCollectionRecordsById" parameterType="Long" resultMap="GarbageCollectionRecordsResult">
+        <include refid="selectGarbageCollectionRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGarbageCollectionRecords" parameterType="GarbageCollectionRecords" useGeneratedKeys="true" keyProperty="id">
+        insert into garbage_collection_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collectionId != null and collectionId != ''">collectionId,</if>
+            <if test="communityName != null">community_name,</if>
+            <if test="garbageQuantity != null">garbage_quantity,</if>
+            <if test="collectorName != null">collector_name,</if>
+            <if test="collectionTime != null">collection_time,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collectionId != null and collectionId != ''">#{collectionId},</if>
+            <if test="communityName != null">#{communityName},</if>
+            <if test="garbageQuantity != null">#{garbageQuantity},</if>
+            <if test="collectorName != null">#{collectorName},</if>
+            <if test="collectionTime != null">#{collectionTime},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGarbageCollectionRecords" parameterType="GarbageCollectionRecords">
+        update garbage_collection_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collectionId != null and collectionId != ''">collectionId = #{collectionId},</if>
+            <if test="communityName != null">community_name = #{communityName},</if>
+            <if test="garbageQuantity != null">garbage_quantity = #{garbageQuantity},</if>
+            <if test="collectorName != null">collector_name = #{collectorName},</if>
+            <if test="collectionTime != null">collection_time = #{collectionTime},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGarbageCollectionRecordsById" parameterType="Long">
+        delete from garbage_collection_records where id = #{id}
+    </delete>
+
+    <delete id="deleteGarbageCollectionRecordsByIds" parameterType="String">
+        delete from garbage_collection_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

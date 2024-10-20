@@ -27,10 +27,10 @@
       </el-form-item>
       <el-form-item label="奖品状态" prop="prizeStatus">
         <el-select v-model="queryParams.prizeStatus" placeholder="请选择奖品状态" clearable>
-          <el-option label="未发放" value="notIssued"></el-option>
-          <el-option label="已发放" value="issued"></el-option>
-          <el-option label="已过期" value="expired"></el-option>
-          <el-option label="已领取" value="received"></el-option>
+          <el-option label="未发放" value="未发放"></el-option>
+          <el-option label="已发放" value="已发放"></el-option>
+          <el-option label="已过期" value="已过期"></el-option>
+          <el-option label="已领取" value="已领取"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>

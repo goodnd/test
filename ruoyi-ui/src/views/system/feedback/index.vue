@@ -9,17 +9,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-
-      <el-form-item label="投诉地址" prop="address">
+      <el-form-item label="反馈地址" prop="address">
         <el-input
           v-model="queryParams.address"
-          placeholder="请输入投诉地址"
+          placeholder="请输入反馈地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-
-
+      <el-form-item label="处理人" prop="processor">
+        <el-input
+          v-model="queryParams.processor"
+          placeholder="请输入处理人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="处理状态" prop="fbStatus">
         <el-select v-model="queryParams.fbStatus" placeholder="请选择处理状态" clearable>
           <el-option label="未处理" value="未处理"></el-option>
@@ -27,7 +32,6 @@
           <el-option label="已处理" value="已处理"></el-option>
         </el-select>
       </el-form-item>
-
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -84,16 +88,26 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="反馈编号" align="center" prop="feedbackId" />
-      <el-table-column label="用户id" align="center" prop="userId" />
-      <el-table-column label="投诉地址" align="center" prop="address" />
+      <el-table-column label="反馈人员" align="center" prop="fbUser" />
+      <el-table-column label="反馈地址" align="center" prop="address" />
       <el-table-column label="反馈问题" align="center" prop="problem" />
+      <el-table-column label="反馈日期" align="center" prop="fbTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.fbTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="处理人" align="center" prop="processor" />
       <el-table-column label="处理状态" align="center" prop="fbStatus">
-<!--        <template slot-scope="scope">-->
-<!--          <dict-tag :options="dict.type.sys_job_status" :value="scope.row.fbStatus"/>-->
-<!--        </template>-->
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_job_status" :value="scope.row.fbStatus"/>
+        </template>
       </el-table-column>
       <el-table-column label="反馈结果" align="center" prop="fbResult" />
+      <el-table-column label="完成日期" align="center" prop="finishTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ scope.row.finishTime }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -128,27 +142,28 @@
         <el-form-item label="反馈编号" prop="feedbackId">
           <el-input v-model="form.feedbackId" placeholder="请输入反馈编号" />
         </el-form-item>
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
+        <el-form-item label="反馈人员" prop="fbUser">
+          <el-input v-model="form.fbUser" placeholder="请输入反馈人员" />
         </el-form-item>
-        <el-form-item label="投诉地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入投诉地址" />
+        <el-form-item label="反馈地址" prop="address">
+          <el-input v-model="form.address" placeholder="请输入反馈地址" />
         </el-form-item>
         <el-form-item label="反馈问题" prop="problem">
           <el-input v-model="form.problem" placeholder="请输入反馈问题" />
         </el-form-item>
+        <el-form-item label="反馈日期" prop="fbTime">
+          <el-date-picker clearable
+            v-model="form.fbTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择反馈日期">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="处理人" prop="processor">
           <el-input v-model="form.processor" placeholder="请输入处理人" />
         </el-form-item>
-        <el-form-item label="处理状态" prop="fbStatus">
-<!--          <el-radio-group v-model="form.fbStatus">-->
-<!--            <el-radio-->
-<!--              v-for="dict in dict.type.sys_job_status"-->
-<!--              :key="dict.value"-->
-<!--              :label="dict.value"-->
-<!--            >{{dict.label}}</el-radio>-->
-<!--          </el-radio-group>-->
-          <el-select v-model="form.fbStatus" placeholder="请选择处理状态">
+        <el-form-item label="处理状态" prop="fbStatus" >
+          <el-select v-model="form.fbStatus" placeholder="请选择处理状态" @change="handleStatusChange">
             <el-option label="未处理" value="未处理"></el-option>
             <el-option label="正在处理中" value="正在处理中"></el-option>
             <el-option label="已处理" value="已处理"></el-option>
@@ -156,6 +171,14 @@
         </el-form-item>
         <el-form-item label="反馈结果" prop="fbResult">
           <el-input v-model="form.fbResult" placeholder="请输入反馈结果" />
+        </el-form-item>
+        <el-form-item label="完成日期" prop="finishTime">
+          <el-date-picker clearable
+            v-model="form.finishTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择完成日期" :disabled="isFinishDateDisabled">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -197,15 +220,13 @@ export default {
         pageNum: 1,
         pageSize: 10,
         feedbackId: null,
-        userId: null,
         address: null,
-        problem: null,
         processor: null,
         fbStatus: null,
-        fbResult: null
       },
       // 表单参数
-      form: {},
+      form: {fbStatus: '',
+        finishTime: null},
       // 表单校验
       rules: {
         feedbackId: [
@@ -217,7 +238,21 @@ export default {
   created() {
     this.getList();
   },
+  computed: {
+    isFinishDateDisabled() {
+      // 如果处理状态不等于“已处理”，则禁用日期选择器
+      return this.form.fbStatus !== '已处理';
+    }
+  },
   methods: {
+    handleStatusChange(value) {
+      console.log("asdfasdas")
+      console.log("this is change:" , value)
+      // 当处理状态变化时，如果状态不等于“已处理”，则将完成日期设置为 null
+      if (value!= '已处理') {
+        this.form.finishTime = null; // 设置完成日期为 null
+      }
+    },
     /** 查询反馈与处理列表 */
     getList() {
       this.loading = true;
@@ -237,12 +272,14 @@ export default {
       this.form = {
         id: null,
         feedbackId: null,
-        userId: null,
+        fbUser: null,
         address: null,
         problem: null,
+        fbTime: null,
         processor: null,
         fbStatus: null,
-        fbResult: null
+        fbResult: null,
+        finishTime: null
       };
       this.resetForm("form");
     },

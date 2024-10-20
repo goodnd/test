@@ -3,9 +3,9 @@ package com.ruoyi.web.controller.goodnight.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.web.controller.goodnight.domain.Prize;
-import com.ruoyi.web.controller.goodnight.domain.SiteManagement;
-import com.ruoyi.web.controller.goodnight.service.ISiteManagementService;
+import com.ruoyi.web.controller.goodnight.domain.GarbageStation;
+import com.ruoyi.web.controller.goodnight.domain.Site;
+import com.ruoyi.web.controller.goodnight.service.ISiteService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,25 +28,30 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 垃圾站点管理Controller
  * 
  * @author goodnight
- * @date 2024-10-04
+ * @date 2024-10-18
  */
 @RestController
 @RequestMapping("/system/site")
-public class SiteManagementController extends BaseController
+public class SiteController extends BaseController
 {
     @Autowired
-    private ISiteManagementService siteManagementService;
-
+    private ISiteService siteService;
 
     /**
      * 查询垃圾站点管理列表
      */
     @PreAuthorize("@ss.hasPermi('system:site:list')")
+    @PostMapping(value = "listAll")
+    public  AjaxResult listAll(){
+        List<Site> dataList = siteService.selectSiteList(null);
+        return AjaxResult.success(dataList);
+    }
+
     @GetMapping("/list")
-    public TableDataInfo list(SiteManagement siteManagement)
+    public TableDataInfo list(Site site)
     {
         startPage();
-        List<SiteManagement> list = siteManagementService.selectSiteManagementList(siteManagement);
+        List<Site> list = siteService.selectSiteList(site);
         return getDataTable(list);
     }
 
@@ -56,10 +61,10 @@ public class SiteManagementController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:site:export')")
     @Log(title = "垃圾站点管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SiteManagement siteManagement)
+    public void export(HttpServletResponse response, Site site)
     {
-        List<SiteManagement> list = siteManagementService.selectSiteManagementList(siteManagement);
-        ExcelUtil<SiteManagement> util = new ExcelUtil<SiteManagement>(SiteManagement.class);
+        List<Site> list = siteService.selectSiteList(site);
+        ExcelUtil<Site> util = new ExcelUtil<Site>(Site.class);
         util.exportExcel(response, list, "垃圾站点管理数据");
     }
 
@@ -70,7 +75,7 @@ public class SiteManagementController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(siteManagementService.selectSiteManagementById(id));
+        return success(siteService.selectSiteById(id));
     }
 
     /**
@@ -79,9 +84,9 @@ public class SiteManagementController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:site:add')")
     @Log(title = "垃圾站点管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SiteManagement siteManagement)
+    public AjaxResult add(@RequestBody Site site)
     {
-        return toAjax(siteManagementService.insertSiteManagement(siteManagement));
+        return toAjax(siteService.insertSite(site));
     }
 
     /**
@@ -90,9 +95,9 @@ public class SiteManagementController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:site:edit')")
     @Log(title = "垃圾站点管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SiteManagement siteManagement)
+    public AjaxResult edit(@RequestBody Site site)
     {
-        return toAjax(siteManagementService.updateSiteManagement(siteManagement));
+        return toAjax(siteService.updateSite(site));
     }
 
     /**
@@ -103,6 +108,6 @@ public class SiteManagementController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(siteManagementService.deleteSiteManagementByIds(ids));
+        return toAjax(siteService.deleteSiteByIds(ids));
     }
 }
