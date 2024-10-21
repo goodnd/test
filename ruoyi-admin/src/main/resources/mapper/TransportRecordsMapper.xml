@@ -76,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="driver != null">driver = #{driver},</if>
             <if test="vehiclePlateNumber != null">vehiclePlateNumber = #{vehiclePlateNumber},</if>
             <if test="transportStatus != null">transport_status = #{transportStatus},</if>
-            <if test="transportFinishTime != null">transport_finish_time = #{transportFinishTime},</if>
+           transport_finish_time = #{transportFinishTime},
         </trim>
         where id = #{id}
     </update>

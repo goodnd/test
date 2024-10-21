@@ -37,6 +37,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
+    <select id="selectSiteListByIds" resultMap="SiteResult">
+        SELECT
+        *
+        FROM
+        sm_site
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                AND id IN
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <insert id="insertSite" parameterType="Site" useGeneratedKeys="true" keyProperty="id">
         insert into sm_site
         <trim prefix="(" suffix=")" suffixOverrides=",">

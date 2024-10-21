@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.goodnight.mapper;
 
 import com.ruoyi.web.controller.goodnight.domain.Site;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface SiteMapper
      * @return 垃圾站点管理
      */
     public Site selectSiteById(Long id);
+
+    public List<Site> selectSiteListByIds(@Param("ids")List<Long> ids);
 
     /**
      * 查询垃圾站点管理列表

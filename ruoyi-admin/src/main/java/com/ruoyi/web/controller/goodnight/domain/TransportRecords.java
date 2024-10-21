@@ -32,14 +32,16 @@ public class TransportRecords extends BaseEntity
     private Date transportDay;
 
     /** 负责站点 */
-    @Excel(name = "负责站点")
-    private String transportSites;
 
-    private List<String> transportSitesList;
+    private String transportSites;
+    @Excel(name = "负责站点")
+    private String transportSitesName;
 
     /** 目标回收站 */
     @Excel(name = "目标回收站")
     private String transportStation;
+    @Excel(name = "目标回收站")
+    private String transportStationName;
 
     /** 开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -169,5 +171,21 @@ public class TransportRecords extends BaseEntity
             .append("transportStatus", getTransportStatus())
             .append("transportFinishTime", getTransportFinishTime())
             .toString();
+    }
+
+    public String getTransportSitesName() {
+        return transportSitesName;
+    }
+
+    public void setTransportSitesName(String transportSitesName) {
+        this.transportSitesName = transportSitesName;
+    }
+
+    public String getTransportStationName() {
+        return transportStationName;
+    }
+
+    public void setTransportStationName(String transportStationName) {
+        this.transportStationName = transportStationName;
     }
 }

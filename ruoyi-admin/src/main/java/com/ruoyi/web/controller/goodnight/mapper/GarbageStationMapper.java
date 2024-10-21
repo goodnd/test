@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.goodnight.mapper;
 
 import com.ruoyi.web.controller.goodnight.domain.GarbageStation;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,6 +22,12 @@ public interface GarbageStationMapper
      */
     public GarbageStation selectGarbageStationById(Long id);
 
+    /**
+     * id查询
+     * @param ids
+     * @return
+     */
+    public List<GarbageStation> selectGarbageStationByIds(@Param("ids")List<Long> ids);
     /**
      * 查询垃圾回收站管理列表
      * 

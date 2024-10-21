@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.DriverMapper">
+    
+    <resultMap type="Driver" id="DriverResult">
+        <result property="id"    column="id"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="phone"    column="phone"    />
+        <result property="homeAddress"    column="home_address"    />
+        <result property="workAddress"    column="work_address"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectDriverVo">
+        select id, driver_id, name, sex, phone, home_address, work_address, notes from sm_driver
+    </sql>
+
+    <select id="selectDriverList" parameterType="Driver" resultMap="DriverResult">
+        <include refid="selectDriverVo"/>
+        <where>  
+            <if test="driverId != null  and driverId != ''"> and driver_id like concat('%', #{driverId}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="workAddress != null  and workAddress != ''"> and work_address like concat('%', #{workAddress}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDriverById" parameterType="Long" resultMap="DriverResult">
+        <include refid="selectDriverVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDriver" parameterType="Driver" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_driver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="driverId != null and driverId != ''">driver_id,</if>
+            <if test="name != null">name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="phone != null">phone,</if>
+            <if test="homeAddress != null">home_address,</if>
+            <if test="workAddress != null">work_address,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="driverId != null and driverId != ''">#{driverId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="homeAddress != null">#{homeAddress},</if>
+            <if test="workAddress != null">#{workAddress},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDriver" parameterType="Driver">
+        update sm_driver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="driverId != null and driverId != ''">driver_id = #{driverId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="homeAddress != null">home_address = #{homeAddress},</if>
+            <if test="workAddress != null">work_address = #{workAddress},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDriverById" parameterType="Long">
+        delete from sm_driver where id = #{id}
+    </delete>
+
+    <delete id="deleteDriverByIds" parameterType="String">
+        delete from sm_driver where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

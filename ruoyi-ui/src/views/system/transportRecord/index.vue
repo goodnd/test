@@ -45,7 +45,7 @@
       </el-form-item>
 <!--       <el-table-column label="运输状态" align="center" prop="transportStatus" />-->
       <el-form-item label="运输状态" prop="transportStatus">
-        <el-select v-model="form.transportStatus" placeholder="请选择运输状态">
+        <el-select v-model="form.transportStatus" placeholder="请选择运输状态"  @change="handleTransportStatusChange">
           <el-option label="未运输" value="未运输" />
           <el-option label="正在运输中" value="正在运输中" />
           <el-option label="运输完成" value="运输完成" />
@@ -112,8 +112,16 @@
           <span>{{ parseTime(scope.row.transportDay, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="负责站点" align="center" prop="transportSites" />
-      <el-table-column label="目标回收站" align="center" prop="transportStation" />
+      <el-table-column label="负责站点" align="center" prop="transportSitesName" >
+        <template slot-scope="scope">
+          <span>{{scope.row.transportSitesName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="目标回收站" align="center" prop="transportStationName" >
+        <template slot-scope="scope">
+          <span>{{scope.row.transportStationName}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="开始时间" align="center" prop="transportStartTime" width="180">
         <template slot-scope="scope">
           <span>{{scope.row.transportStartTime}}</span>
@@ -171,7 +179,10 @@
         </el-form-item>
         <el-form-item label="负责站点" prop="transportSites">
 <!--          <el-input v-model="form.transportSites" placeholder="请输入负责站点" />-->
-          <el-select v-model="form.transportSites" multiple placeholder="请选择负责站点">
+          <el-select
+            v-model="form.transportSites"
+            multiple
+            placeholder="请选择负责站点">
             <el-option
               v-for="item in siteOptions"
               :key="item.id"
@@ -334,13 +345,14 @@ export default {
   },
   created() {
     this.getList();
-    this.getAllStation();
-    this.getAllSite();
+
   },
   methods: {
     handleTransportStatusChange() {
       // 当运输状态变化时，如果状态不等于“运输完成”，则将完成时间设置为 null
+      console.log("this is change")
       if (this.form.transportStatus !== '运输完成') {
+        console.log("this is change1")
         this.form.transportFinishTime = null; // 设置完成时间为 null
       }
 
@@ -426,31 +438,41 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.getAllStation();
+      this.getAllSite();
       this.reset();
       this.open = true;
       this.title = "添加垃圾运输记录";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.getAllStation();
+      this.getAllSite();
       this.reset();
       const id = row.id || this.ids
       console.log("this is :",this.form)
-      if (this.form.transportSites) {
-        // 如果 transportSites 是字符串，则将其转换为数组
-        if (typeof this.form.transportSites === "string") {
-          this.form.transportSites = row.transportSites.split(",").map(site => site.trim());
-        }
-      }
-      console.log("this is asd:",this.form.transportSites)
+      // if (this.form.transportSites) {
+      //   // 如果 transportSites 是字符串，则将其转换为数组
+      //   if (typeof this.form.transportSites === "string") {
+      //     this.form.transportSites = row.transportSites.split(",").map(site => site.trim());
+      //   }
+      // }
+      // console.log("this is asd:",this.form.transportSites)
 
       getTransportRecord(id).then(response => {
         this.form = response.data;
-        if (this.form.transportSites) {
-          // 如果 transportSites 是字符串，则将其转换为数组
-          if (typeof this.form.transportSites === "string") {
-            this.form.transportSites = this.form.transportSites.split(",").map(site => site.trim());
+          if (this.form.transportSites) {
+            // 如果 transportSites 是字符串，则将其转换为数字数组
+            if (typeof this.form.transportSites === "string") {
+              this.form.transportSites = this.form.transportSites
+                .split(",")  // 将字符串分割为数组
+                .map(site => Number(site.trim())) // 转换为数字并去除空格
+                .filter(site => !isNaN(site)); // 过滤掉非数字项
+            }
           }
-        }
+          if(this.form.transportStation){
+            this.form.transportStation = Number(this.form.transportStation);
+          }
         this.open = true;
         this.title = "修改垃圾运输记录";
       });
@@ -462,14 +484,13 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          console.log("this is form")
+          if (this.form.transportSites && this.form.transportSites.length > 0) {
+            this.form.transportSites = this.form.transportSites.join(", ");
+          } else {
+            this.form.transportSites = null; // 或者可以设置为 ""
+          }
           if (this.form.id != null) {
-            console.log("this is form")
-            if (this.form.transportSites && this.form.transportSites.length > 0) {
-              this.form.transportSites = this.form.transportSites.join(", ");
-            } else {
-              this.form.transportSites = null; // 或者可以设置为 ""
-            }
-
             console.log( "this is asd",this.form.transportSites)
             updateTransportRecord(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

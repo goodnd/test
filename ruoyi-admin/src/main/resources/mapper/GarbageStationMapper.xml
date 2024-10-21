@@ -35,6 +35,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectGarbageStationVo"/>
         where id = #{id}
     </select>
+    <select id="selectGarbageStationByIds" resultMap="GarbageStationResult">
+        SELECT
+        *
+        FROM
+        sm_garbage_station
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                AND id IN
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
 
     <insert id="insertGarbageStation" parameterType="GarbageStation">
         insert into sm_garbage_station

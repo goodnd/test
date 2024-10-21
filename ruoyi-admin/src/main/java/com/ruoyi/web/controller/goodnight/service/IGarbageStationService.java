@@ -21,6 +21,8 @@ public interface IGarbageStationService
      */
     public GarbageStation selectGarbageStationById(Long id);
 
+
+
     /**
      * 查询垃圾回收站管理列表
      * 

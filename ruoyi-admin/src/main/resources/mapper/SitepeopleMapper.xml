@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.goodnight.mapper.SitepeopleMapper">
+    
+    <resultMap type="Sitepeople" id="SitepeopleResult">
+        <result property="id"    column="id"    />
+        <result property="sitePeopleId"    column="site_people_id"    />
+        <result property="sitePeopleName"    column="site_people_name"    />
+        <result property="sex"    column="sex"    />
+        <result property="phone"    column="phone"    />
+        <result property="homeAddress"    column="home_address"    />
+        <result property="job"    column="job"    />
+        <result property="responsibleArea"    column="responsible_area"    />
+        <result property="responsibleSite"    column="responsible_site"    />
+        <result property="notes"    column="notes"    />
+    </resultMap>
+
+    <sql id="selectSitepeopleVo">
+        select id, site_people_id, site_people_name, sex, phone, home_address, job, responsible_area, responsible_site, notes from sm_sitepeople
+    </sql>
+
+    <select id="selectSitepeopleList" parameterType="Sitepeople" resultMap="SitepeopleResult">
+        <include refid="selectSitepeopleVo"/>
+        <where>  
+            <if test="sitePeopleId != null  and sitePeopleId != ''"> and site_people_id like concat('%', #{sitePeopleId}, '%')</if>
+            <if test="sitePeopleName != null  and sitePeopleName != ''"> and site_people_name like concat('%', #{sitePeopleName}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="responsibleArea != null  and responsibleArea != ''"> and responsible_area like concat('%', #{responsibleArea}, '%')</if>
+            <if test="responsibleSite != null  and responsibleSite != ''"> and responsible_site like concat('%', #{responsibleSite}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSitepeopleById" parameterType="Long" resultMap="SitepeopleResult">
+        <include refid="selectSitepeopleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSitepeople" parameterType="Sitepeople" useGeneratedKeys="true" keyProperty="id">
+        insert into sm_sitepeople
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sitePeopleId != null and sitePeopleId != ''">site_people_id,</if>
+            <if test="sitePeopleName != null">site_people_name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="phone != null">phone,</if>
+            <if test="homeAddress != null">home_address,</if>
+            <if test="job != null">job,</if>
+            <if test="responsibleArea != null">responsible_area,</if>
+            <if test="responsibleSite != null">responsible_site,</if>
+            <if test="notes != null">notes,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sitePeopleId != null and sitePeopleId != ''">#{sitePeopleId},</if>
+            <if test="sitePeopleName != null">#{sitePeopleName},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="homeAddress != null">#{homeAddress},</if>
+            <if test="job != null">#{job},</if>
+            <if test="responsibleArea != null">#{responsibleArea},</if>
+            <if test="responsibleSite != null">#{responsibleSite},</if>
+            <if test="notes != null">#{notes},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSitepeople" parameterType="Sitepeople">
+        update sm_sitepeople
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sitePeopleId != null and sitePeopleId != ''">site_people_id = #{sitePeopleId},</if>
+            <if test="sitePeopleName != null">site_people_name = #{sitePeopleName},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="homeAddress != null">home_address = #{homeAddress},</if>
+            <if test="job != null">job = #{job},</if>
+            <if test="responsibleArea != null">responsible_area = #{responsibleArea},</if>
+            <if test="responsibleSite != null">responsible_site = #{responsibleSite},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSitepeopleById" parameterType="Long">
+        delete from sm_sitepeople where id = #{id}
+    </delete>
+
+    <delete id="deleteSitepeopleByIds" parameterType="String">
+        delete from sm_sitepeople where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
