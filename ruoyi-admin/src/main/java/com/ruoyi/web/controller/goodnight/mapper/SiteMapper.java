@@ -25,6 +25,13 @@ public interface SiteMapper
     public List<Site> selectSiteListByIds(@Param("ids")List<Long> ids);
 
     /**
+     * 通过名字查询
+     * @param siteNames
+     * @return
+     */
+    public List<Site> selectSiteListByName(@Param("siteName") String siteNames);
+
+    /**
      * 查询垃圾站点管理列表
      * 
      * @param site 垃圾站点管理

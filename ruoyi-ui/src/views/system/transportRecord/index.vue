@@ -19,33 +19,33 @@
       </el-form-item>
       <el-form-item label="负责站点" prop="transportSites">
         <el-input
-          v-model="queryParams.transportSites"
+          v-model="queryParams.transportSitesName"
           placeholder="请输入负责站点"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="回收站" prop="transportStation">
-<!--        <el-input-->
-<!--          v-model="queryParams.transportStation"-->
-<!--          placeholder="请输入目标回收站"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-        <template>
-          <el-select v-model="form.transportStation" placeholder="请选择目标回收站">
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.stationName"
-              :value="item.stationName">
-            </el-option>
-          </el-select>
-        </template>
+      <el-form-item label="回收站" prop="transportStation" clearable>
+        <el-input
+          v-model="queryParams.transportStationName"
+          placeholder="请输入目标回收站"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+<!--        <template>-->
+<!--          <el-select v-model="form.transportStation" placeholder="请选择目标回收站" clearable>-->
+<!--            <el-option-->
+<!--              v-for="item in options"-->
+<!--              :key="item.id"-->
+<!--              :label="item.stationName"-->
+<!--              :value="item.stationName">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+<!--        </template>-->
       </el-form-item>
 <!--       <el-table-column label="运输状态" align="center" prop="transportStatus" />-->
       <el-form-item label="运输状态" prop="transportStatus">
-        <el-select v-model="form.transportStatus" placeholder="请选择运输状态"  @change="handleTransportStatusChange">
+        <el-select v-model="queryParams.transportStatus" placeholder="请选择运输状态"   clearable>
           <el-option label="未运输" value="未运输" />
           <el-option label="正在运输中" value="正在运输中" />
           <el-option label="运输完成" value="运输完成" />
@@ -129,7 +129,11 @@
       </el-table-column>
       <el-table-column label="运输司机" align="center" prop="driver" />
       <el-table-column label="车辆车牌号" align="center" prop="vehiclePlateNumber" />
-      <el-table-column label="运输状态" align="center" prop="transportStatus" />
+      <el-table-column label="运输状态" align="center" prop="transportStatus" >
+        <template slot-scope="scope">
+          <span>{{scope.row.transportStatus}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="完成时间" align="center" prop="transportFinishTime" width="180">
         <template slot-scope="scope">
           <span>{{scope.row.transportFinishTime}}</span>
@@ -178,7 +182,6 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="负责站点" prop="transportSites">
-<!--          <el-input v-model="form.transportSites" placeholder="请输入负责站点" />-->
           <el-select
             v-model="form.transportSites"
             multiple
@@ -192,7 +195,6 @@
           </el-select>
         </el-form-item>
         <el-form-item label="目标回收站" prop="transportStation">
-<!--          <el-input v-model="form.transportStation" placeholder="请输入目标回收站" />-->
           <template>
             <el-select v-model="form.transportStation" placeholder="请选择目标回收站">
               <el-option
@@ -204,6 +206,7 @@
             </el-select>
           </template>
         </el-form-item>
+
 <!--        <el-form-item label="开始时间" prop="transportStartTime" @change="checkChange">-->
 <!--          <el-time-picker  v-model="form.transportStartTime"-->
 <!--          format="HH:mm:ss"-->
@@ -317,6 +320,8 @@ export default {
         transportSites: [],
         transportStation: null,
         transportStatus: null,
+        transportStationName:null,
+        transportSitesName: null
       },
       // 表单参数
       form: {
@@ -484,6 +489,11 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          form.siteOptions = siteOptions.value;
+          form.siteOptions.forEach(item => {
+            item.value = JSON.stringify(item.value)
+          })
+
           console.log("this is form")
           if (this.form.transportSites && this.form.transportSites.length > 0) {
             this.form.transportSites = this.form.transportSites.join(", ");

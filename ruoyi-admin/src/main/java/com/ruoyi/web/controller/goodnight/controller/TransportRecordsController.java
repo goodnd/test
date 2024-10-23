@@ -58,6 +58,26 @@ public class TransportRecordsController extends BaseController
     public TableDataInfo list(TransportRecords transportRecords)
     {
         startPage();
+        if(transportRecords.getTransportSitesName()!=null){
+            //因为存入到数据库的目标站点是用id存入所依赖的站点id，所以需要先查询出站点id
+            List<Site> sites = siteMapper.selectSiteListByName(transportRecords.getTransportSitesName());
+            List<Long> collect = sites.stream().map(Site::getId).collect(Collectors.toList());
+            if(!collect.isEmpty()){
+                transportRecords.setTransportSites(String.valueOf(collect.get(0)));
+            }else {
+                transportRecords.setTransportSites("-1");
+            }
+        }
+        if(transportRecords.getTransportStationName()!=null){
+            //同上
+            List<GarbageStation> stations = garbageStationMapper.selectGarbageStationByName(transportRecords.getTransportStationName());
+            if(!stations.isEmpty()){
+                String s = String.valueOf(stations.get(0).getId());
+                transportRecords.setTransportStation(String.valueOf(stations.get(0).getId()));
+            }else {
+                transportRecords.setTransportStation("-1");
+            }
+        }
         List<TransportRecords> list = transportRecordsService.selectTransportRecordsList(transportRecords);
         // 使用 Stream API 提取 transportSites，并转换为 List<Long>
         List<Long> tranSportStationIds = list.stream()

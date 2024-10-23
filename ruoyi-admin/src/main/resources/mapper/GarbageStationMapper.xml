@@ -30,7 +30,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stationStatus != null  and stationStatus != ''"> and station_status = #{stationStatus}</if>
         </where>
     </select>
-    
+    <select id="selectGarbageStationByName" resultMap="GarbageStationResult">
+        SELECT
+            *
+        FROM
+            sm_garbage_station
+        <if test="stationName != null and stationName != ''">
+            WHERE
+            station_name like concat('%', #{stationName}, '%')
+        </if>
+    </select>
     <select id="selectGarbageStationById" parameterType="Long" resultMap="GarbageStationResult">
         <include refid="selectGarbageStationVo"/>
         where id = #{id}

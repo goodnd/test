@@ -28,6 +28,13 @@ public interface GarbageStationMapper
      * @return
      */
     public List<GarbageStation> selectGarbageStationByIds(@Param("ids")List<Long> ids);
+
+    /**
+     * 通过名字查找回收站点
+     * @param name
+     * @return
+     */
+    public List<GarbageStation> selectGarbageStationByName(String name);
     /**
      * 查询垃圾回收站管理列表
      * 
